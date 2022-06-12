@@ -1,0 +1,16 @@
+name: "Setup test server"
+author: "Zxilly"
+description: "Setup a test server of Notify."
+
+runs:
+  using: 'docker'
+  image: 'ghcr.io/znotify/notify-api:master'
+  env: 
+    TEST: true
+  args:
+    - "-p"
+    - "14444:14444"
+
+branding:
+  icon: "coffee"
+  color: "green"
