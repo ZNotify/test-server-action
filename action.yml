@@ -6,7 +6,7 @@ runs:
   using: "composite"
   steps:
     - shell: bash
-      if: contains(github.repository, "sdk") 
+      if: contains(github.repository, 'sdk') 
       run: |
         wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
         unzip server.zip
@@ -14,12 +14,12 @@ runs:
         chmod +x server
 
     - uses: actions/download-artifact@v3
-      if: contains(github.repository, "server") 
+      if: contains(github.repository, 'server') 
       with:
         name: server
 
     - shell: bash
-      if: contains(github.repository, "server") 
+      if: contains(github.repository, 'server') 
       run: chmod +x server
 
     - shell: bash
