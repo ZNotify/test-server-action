@@ -12,7 +12,7 @@ runs:
   using: "composite"
   steps:
     - shell: bash
-      if: "{{inputs.mode}} == 'sdk'"
+      if: inputs.mode == 'sdk'
       run: |
         wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
         unzip server.zip
@@ -20,12 +20,12 @@ runs:
         chmod +x server
 
     - uses: actions/download-artifact@v3
-      if: "{{inputs.mode}} == 'server'"
+      if: inputs.mode == 'server'
       with:
         name: server
 
     - shell: bash
-      if: "{{inputs.mode}} == 'server'"
+      if: inputs.mode == 'server'
       run: chmod +x server
 
     - shell: bash
