@@ -9,12 +9,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: ./
-        with:
-          mode: sdk
+      # ignore tests for now
+      # - uses: ./
+      #   with:
+      #     mode: sdk
 
-      - name: Test Port
-        run: curl http://127.0.0.1:14444/alive
+      # - name: Test Port
+      #   run: curl http://127.0.0.1:14444/alive
 
   # test-server:
   #   runs-on: ubuntu-latest
