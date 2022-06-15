@@ -2,15 +2,37 @@ name: "Setup test server"
 author: "Zxilly"
 description: "Setup a test server of Notify."
 
+inputs:
+  mode:
+    description: "Test mode"
+    required: false
+    default: "server"
+
 runs:
-  using: 'docker'
-  image: 'ghcr.io/znotify/notify-api:master'
-  env: 
-    TEST: true
-  args:
-    - "-p"
-    - "14444:14444"
+  using: "composite"
+  steps:
+    - shell: bash
+      if: "{{inputs.mode}} == 'sdk'"
+      run: |
+        wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
+        unzip server.zip
+        rm server.zip
+        chmod +x server
+
+    - uses: actions/download-artifact@v3
+      if: "{{inputs.mode}} == 'server'"
+      with:
+        name: server
+
+    - shell: bash
+      if: "{{inputs.mode}} == 'server'"
+      run: chmod +x server
+
+    - shell: bash
+      run: ./server &
+      env:
+        TEST: "true"
 
 branding:
-  icon: "coffee"
+  icon: "airplay"
   color: "green"
