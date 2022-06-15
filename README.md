@@ -1,4 +1,4 @@
-# test-action for Notify
+# test-server-action for Notify
 
 Setup a test server listen on `0.0.0.0:14444`
 
