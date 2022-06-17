@@ -40,7 +40,7 @@ runs:
       working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
       shell: bash
       run: |
-        go build github.com/ZNotify/server -o server
+        go build github.com/ZNotify/server
         ./server &
       env:
         TEST: 'true'
