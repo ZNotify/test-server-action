@@ -31,16 +31,17 @@ runs:
       shell: bash
       run: mkdir -p ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
 
-    - name: Download assets
-      uses: wei/wget@v1
-      with:
-        args: https://github.com/ZNotify/frontend/releases/download/bundle/build.zip -O ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}/build.zip
+    - name: Setup wget for windows
+      shell: powershell
+      if: ${{ runner.os == 'windows' }}
+      run: |
+        choco install wget -y
 
     - name: Fetch frontend asset
       shell: bash
       working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
       run: |
-        unzip build.zip
+        wget https://github.com/ZNotify/frontend/releases/download/bundle/build.zip
         7z x build.zip
         mv build static
 
