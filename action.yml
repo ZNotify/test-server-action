@@ -5,27 +5,36 @@ description: "Setup a test server of Notify."
 runs:
   using: "composite"
   steps:
-    - shell: bash
-      if: contains(github.repository, 'sdk') 
-      run: |
-        wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
-        unzip server.zip
-        rm server.zip
-        chmod +x server
-
-    - uses: actions/download-artifact@v3
+    - name: Checkout for server test
+      uses: actions/checkout@v3
       if: contains(github.repository, 'server') 
       with:
-        name: server
+        repository: 'ZNotify/server'
+        path: ${{ github.run_id }}-${{ github.run_number }}
 
-    - shell: bash
-      if: contains(github.repository, 'server') 
-      run: chmod +x server
+    - name: Checkout for sdk test
+      uses: actions/checkout@v3
+      if: contains(github.repository, 'sdk') 
+      with:
+        repository: 'ZNotify/server'
+        ref: master
+        path: ${{ github.run_id }}-${{ github.run_number }}
+    
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.18'
+        cache: true
+        cache-dependency-path: ${{ github.run_id }}-${{ github.run_number }}/go.sum
 
-    - shell: bash
-      run: ./server &
+    - name: Build and run
+      working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
+      shell: bash
+      run: |
+        go build github.com/ZNotify/server -o server
+        ./server &
       env:
-        TEST: "true"
+        TEST: 'true'
 
 branding:
   icon: "airplay"
