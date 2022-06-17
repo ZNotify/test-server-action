@@ -27,6 +27,10 @@ runs:
         cache: true
         cache-dependency-path: ${{ github.run_id }}-${{ github.run_number }}/go.sum
 
+    - name: Mkdir
+      shell: bash
+      run: mkdir -p ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
+
     - name: Download assets
       uses: wei/wget@v1
       with:
