@@ -28,6 +28,8 @@ runs:
         cache-dependency-path: ${{ github.run_id }}-${{ github.run_number }}/go.sum
 
     - name: Fetch frontend asset
+      shell: bash
+      working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
       run: |
         wget https://github.com/ZNotify/frontend/releases/download/bundle/build.zip
         unzip build.zip
