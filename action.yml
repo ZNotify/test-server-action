@@ -29,9 +29,8 @@ runs:
 
     - name: Download assets
       uses: wei/wget@v1
-      working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
       with:
-        args: https://github.com/ZNotify/frontend/releases/download/bundle/build.zip
+        args: https://github.com/ZNotify/frontend/releases/download/bundle/build.zip -O ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}/build.zip
 
     - name: Fetch frontend asset
       shell: bash
