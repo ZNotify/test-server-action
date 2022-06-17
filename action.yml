@@ -27,10 +27,9 @@ runs:
         cache: true
         cache-dependency-path: ${{ github.run_id }}-${{ github.run_number }}/go.sum
 
-
     - name: Download assets
-      working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
       uses: wei/wget@v1
+      working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
       with:
         args: https://github.com/ZNotify/frontend/releases/download/bundle/build.zip
 
