@@ -5,54 +5,44 @@ description: "Setup a test server of Notify."
 runs:
   using: "composite"
   steps:
-    - name: Checkout for server test
-      uses: actions/checkout@v3
+    - shell: bash
+      if: contains(github.repository, 'sdk') 
+      run: |
+        wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
+        7z x server.zip
+        rm server.zip
+    
+    - uses: actions/download-artifact@v3
       if: contains(github.repository, 'server') 
       with:
-        repository: 'ZNotify/server'
-        path: ${{ github.run_id }}-${{ github.run_number }}
+        name: server
 
-    - name: Checkout for sdk test
-      uses: actions/checkout@v3
-      if: contains(github.repository, 'sdk') 
-      with:
-        repository: 'ZNotify/server'
-        ref: master
-        path: ${{ github.run_id }}-${{ github.run_number }}
-    
-    - name: Setup Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '1.18'
-        cache: true
-        cache-dependency-path: ${{ github.run_id }}-${{ github.run_number }}/go.sum
-
-    - name: Mkdir
-      shell: bash
-      run: mkdir -p ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
-
-    - name: Setup wget for windows
-      shell: powershell
-      if: ${{ runner.os == 'windows' }}
+    - shell: bash
+      if: contains(github.repository, 'server') && runner.os != 'Windows'
       run: |
-        choco install wget -y
+        chmod +x server-linux
+        chmod +x server-macos
 
-    - name: Fetch frontend asset
+    - name: Run on Windows
       shell: bash
-      working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
-      run: |
-        wget https://github.com/ZNotify/frontend/releases/download/bundle/build.zip
-        7z x build.zip
-        mv build static
-
-    - name: Build and run
-      working-directory: ${{ github.workspace }}/${{ github.run_id }}-${{ github.run_number }}
-      shell: bash
-      run: |
-        go build github.com/ZNotify/server
-        ./server &
+      if: runner.os == 'Windows'
+      run: ./server-windows &
       env:
-        TEST: 'true'
+        TEST: "true"
+    
+    - name: Run on MacOS
+      shell: bash
+      if: runner.os == 'MacOS'
+      run: ./server-macos &
+      env:
+        TEST: "true"
+
+    - name: Run on Linux
+      shell: bash
+      if: runner.os == 'Linux'
+      run: ./server-linux &
+      env:
+        TEST: "true"
 
 branding:
   icon: "airplay"
