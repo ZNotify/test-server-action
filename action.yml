@@ -32,7 +32,7 @@ runs:
     
     - name: Run on MacOS
       shell: bash
-      if: runner.os == 'MacOS'
+      if: runner.os == 'macOS'
       run: ./server-macos &
       env:
         TEST: "true"
