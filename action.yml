@@ -18,7 +18,7 @@ runs:
         name: server
 
     - shell: bash
-      if: contains(github.repository, 'server') && runner.os != 'Windows'
+      if: runner.os != 'Windows'
       run: |
         chmod +x server-linux
         chmod +x server-macos
