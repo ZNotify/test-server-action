@@ -5,6 +5,10 @@ description: "Setup a test server of Notify."
 runs:
   using: "composite"
   steps:
+    - uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
     - uses: actions/checkout@v3
       with:
         repository: "ZNotify/server"
@@ -12,7 +16,15 @@ runs:
     - uses: actions/setup-go@v3
       with:
         go-version: "1.19"
+        cache: "true"
     
+    - name: Fetch frontend asset
+      shell: bash
+      run: |
+        wget https://github.com/ZNotify/frontend/releases/download/bundle/build.zip
+        unzip build.zip
+        rm build.zip
+        mv build web/static
 
     - name: Run
       shell: bash
