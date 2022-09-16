@@ -12,12 +12,17 @@ jobs:
       - name: Download release
         run: |
           wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
+          7z x server.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: server
-          path: server.zip
+          path: |
+            server-linux
+            server-windows.exe
+            server-macos
+          if-no-files-found: error
 
       - uses: ./
 

@@ -20,6 +20,7 @@ runs:
       run: |
         chmod +x server-linux
         chmod +x server-macos
+
     - name: Run on Windows
       shell: bash
       if: steps.exist.outputs.exists == 'true' && runner.os == 'Windows'
