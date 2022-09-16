@@ -53,6 +53,7 @@ runs:
       with:
         go-version: "1.19"
         cache: "true"
+        cache-dependency-path: server/go.sum
     
     - name: Fetch frontend asset
       if: steps.exist.outputs.exists != 'true'
