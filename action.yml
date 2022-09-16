@@ -62,10 +62,15 @@ runs:
         rm build.zip
         mv build web/static
 
+    - name: Build
+      if: steps.exist.outputs.exists != 'true'
+      shell: bash
+      run: go build notify-api -o server
+    
     - name: Run
       if: steps.exist.outputs.exists != 'true'
       shell: bash
-      run: go build notify-api -o server && ./server &
+      run: ./server &
       env:
         TEST: "true"
 
