@@ -5,42 +5,18 @@ description: "Setup a test server of Notify."
 runs:
   using: "composite"
   steps:
-    - shell: bash
-      if: contains(github.repository, 'sdk') 
-      run: |
-        wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
-        7z x server.zip
-        rm server.zip
-    
-    - uses: actions/download-artifact@v3
-      if: contains(github.repository, 'server') 
+    - uses: actions/checkout@v3
       with:
-        name: server
-
-    - shell: bash
-      if: runner.os != 'Windows'
-      run: |
-        chmod +x server-linux
-        chmod +x server-macos
-
-    - name: Run on Windows
-      shell: bash
-      if: runner.os == 'Windows'
-      run: ./server-windows &
-      env:
-        TEST: "true"
+        repository: "ZNotify/server"
     
-    - name: Run on MacOS
-      shell: bash
-      if: runner.os == 'macOS'
-      run: ./server-macos &
-      env:
-        TEST: "true"
+    - uses: actions/setup-go@v3
+      with:
+        go-version: "1.19"
+    
 
-    - name: Run on Linux
+    - name: Run
       shell: bash
-      if: runner.os == 'Linux'
-      run: ./server-linux &
+      run: go run notify-api
       env:
         TEST: "true"
 
