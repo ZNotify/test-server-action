@@ -16,7 +16,7 @@ runs:
 
     - name: Run
       shell: bash
-      run: go run notify-api
+      run: go run notify-api &
       env:
         TEST: "true"
 
