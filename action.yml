@@ -65,7 +65,7 @@ runs:
     - name: Run
       if: steps.exist.outputs.exists != 'true'
       shell: bash
-      run: go run notify-api &
+      run: go build notify-api -o server && ./server &
       env:
         TEST: "true"
 
