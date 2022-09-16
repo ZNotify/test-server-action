@@ -24,7 +24,7 @@ jobs:
       - name: Test Port
         run: curl http://127.0.0.1:14444/alive
   
-  test-compilte:
+  test-compile:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
