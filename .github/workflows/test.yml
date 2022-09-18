@@ -35,7 +35,11 @@ jobs:
         run: curl http://127.0.0.1:14444/alive
   
   test-compile:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
