@@ -4,20 +4,9 @@ on: push
 
 
 jobs:
-  test-artifact:
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+  upload-artifact:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install wget on Windows
-        if: runner.os == 'Windows'
-        run: choco install wget
-
       - name: Download release
         run: |
           wget https://github.com/ZNotify/server/releases/download/bundle/server.zip -O server.zip
@@ -32,6 +21,17 @@ jobs:
             server-windows.exe
             server-macos
           if-no-files-found: error
+
+  test-artifact:
+    needs: upload-artifact
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - uses: ./
         with:
