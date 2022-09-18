@@ -5,6 +5,7 @@ on: push
 
 jobs:
   upload-artifact:
+    needs: test-compile
     runs-on: ubuntu-latest
     steps:
       - name: Download release

@@ -2,24 +2,18 @@ name: "Setup test server"
 author: "Zxilly"
 description: "Setup a test server of Notify."
 
-inputs:
-  artifact_name:
-    description: "The name of the artifact to download."
-    required: true
-    default: "server"
-
 runs:
   using: "composite"
   steps:
     - uses: xSAVIKx/artifact-exists-action@v0
       id: exist
       with:
-        name: ${{ inputs.artifact_name }}
+        name: 'server'
 
     - uses: actions/download-artifact@v3
       if: steps.exist.outputs.exists == 'true'
       with:
-        name: ${{ inputs.artifact_name }}
+        name: 'server'
 
     - shell: bash
       if: steps.exist.outputs.exists == 'true' && runner.os != 'Windows'
