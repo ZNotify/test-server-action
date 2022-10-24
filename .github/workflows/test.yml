@@ -10,9 +10,9 @@ jobs:
     steps:
       - name: Download release
         run: |
-          wget -O server-linux https://github.com/ZNotify/server/releases/download/latest/server-linux
-          wget -O server-macos https://github.com/ZNotify/server/releases/download/latest/server-macos
-          wget -O server-windows.exe https://github.com/ZNotify/server/releases/download/latest/server-windows.exe
+          wget -q -O server-linux https://github.com/ZNotify/server/releases/download/latest/server-linux
+          wget -q -O server-macos https://github.com/ZNotify/server/releases/download/latest/server-macos
+          wget -q -O server-windows.exe https://github.com/ZNotify/server/releases/download/latest/server-windows.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3

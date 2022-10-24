@@ -26,11 +26,11 @@ runs:
       if: steps.exist.outputs.exists != 'true'
       run: |
         if [ "$RUNNER_OS" == "Windows" ]; then
-          wget -O server-windows.exe https://github.com/ZNotify/server/releases/download/latest/server-windows.exe
+          wget -q -O server-windows.exe https://github.com/ZNotify/server/releases/download/latest/server-windows.exe
         elif [ "$RUNNER_OS" == "Linux" ]; then
-          wget -O server-linux https://github.com/ZNotify/server/releases/download/latest/server-linux
+          wget -q -O server-linux https://github.com/ZNotify/server/releases/download/latest/server-linux
         elif [ "$RUNNER_OS" == "macOS" ]; then
-          wget -O server-macos https://github.com/ZNotify/server/releases/download/latest/server-macos
+          wget -q -O server-macos https://github.com/ZNotify/server/releases/download/latest/server-macos
         fi
         
 
