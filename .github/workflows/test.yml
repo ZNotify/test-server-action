@@ -5,7 +5,7 @@ on: push
 
 jobs:
   upload-artifact:
-    needs: test-compile
+    needs: test-download-release
     runs-on: ubuntu-latest
     steps:
       - name: Download release
@@ -24,7 +24,7 @@ jobs:
             server-macos
           if-no-files-found: error
 
-  test-artifact:
+  test-download-artifact:
     needs: upload-artifact
     strategy:
       fail-fast: true
@@ -42,7 +42,7 @@ jobs:
       - name: Test Port
         run: curl http://127.0.0.1:14444/alive
   
-  test-compile:
+  test-download-release:
     strategy:
       fail-fast: true
       matrix:
