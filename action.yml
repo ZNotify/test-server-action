@@ -2,6 +2,7 @@ name: "Setup test server"
 author: "Zxilly"
 description: "Setup a test server of Notify."
 
+
 runs:
   using: "composite"
   steps:
@@ -14,73 +15,45 @@ runs:
       if: steps.exist.outputs.exists == 'true'
       with:
         name: 'server'
+    
+    - name: Install wget on Windows
+      shell: bash
+      if: steps.exist.outputs.exists != 'true' && runner.os == 'Windows'
+      run: choco install wget
 
-    - shell: bash
-      if: steps.exist.outputs.exists == 'true' && runner.os != 'Windows'
+    - name: Download server
+      shell: bash
+      if: steps.exist.outputs.exists != 'true'
       run: |
-        chmod +x server-linux
-        chmod +x server-macos
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          wget -O server-windows.exe https://github.com/ZNotify/server/releases/download/latest/server-windows.exe
+        elif [ "$RUNNER_OS" == "Linux" ]; then
+          wget -O server-linux https://github.com/ZNotify/server/releases/download/latest/server-linux
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          wget -O server-macos https://github.com/ZNotify/server/releases/download/latest/server-macos
+        
 
     - name: Run on Windows
       shell: bash
-      if: steps.exist.outputs.exists == 'true' && runner.os == 'Windows'
+      if: runner.os == 'Windows'
       run: ./server-windows &
       env:
         TEST: "true"
     
     - name: Run on MacOS
       shell: bash
-      if: steps.exist.outputs.exists == 'true' && runner.os == 'macOS'
-      run: ./server-macos &
+      if: runner.os == 'macOS'
+      run: chmod +x server-macos && ./server-macos &
       env:
         TEST: "true"
 
     - name: Run on Linux
       shell: bash
-      if: steps.exist.outputs.exists == 'true' && runner.os == 'Linux'
-      run: ./server-linux &
+      if: runner.os == 'Linux'
+      run: chmod +x server-linux && ./server-linux &
       env:
         TEST: "true"
 
-    - uses: actions/checkout@v3
-      if: steps.exist.outputs.exists != 'true'
-      with:
-        repository: "ZNotify/server"
-        path: server
-    
-    - uses: actions/setup-go@v3
-      if: steps.exist.outputs.exists != 'true'
-      with:
-        go-version: "1.19"
-        cache: "true"
-        cache-dependency-path: server/go.sum
-
-    - name: Install wget on Windows
-      shell: bash
-      if: steps.exist.outputs.exists != 'true' && runner.os == 'Windows'
-      run: choco install wget
-    
-    - name: Fetch frontend asset
-      if: steps.exist.outputs.exists != 'true'
-      shell: bash
-      run: |
-        cd server
-        wget https://github.com/ZNotify/frontend/releases/download/bundle/build.zip
-        7z x build.zip
-        rm build.zip
-        mv build web/static
-
-    - name: Build
-      if: steps.exist.outputs.exists != 'true'
-      shell: bash
-      run: cd server && go build -o server notify-api
-    
-    - name: Run
-      if: steps.exist.outputs.exists != 'true'
-      shell: bash
-      run: cd server && ./server &
-      env:
-        TEST: "true"
 
 branding:
   icon: "airplay"
