@@ -2120,22 +2120,22 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       process.stdout.write(message + os.EOL);
     }
     exports.info = info2;
-    function startGroup(name) {
+    function startGroup2(name) {
       command_1.issue("group", name);
     }
-    exports.startGroup = startGroup;
-    function endGroup() {
+    exports.startGroup = startGroup2;
+    function endGroup2() {
       command_1.issue("endgroup");
     }
-    exports.endGroup = endGroup;
+    exports.endGroup = endGroup2;
     function group(name, fn) {
       return __awaiter(this, void 0, void 0, function* () {
-        startGroup(name);
+        startGroup2(name);
         let result;
         try {
           result = yield fn();
         } finally {
-          endGroup();
+          endGroup2();
         }
         return result;
       });
@@ -7217,13 +7217,16 @@ async function run() {
   await execBinary(tempPath);
 }
 async function execBinary(path) {
+  core.startGroup("Executing binary");
   const filename = getFilename(assetMap[runnerOS]);
   const execPath = path + "/" + filename;
   (0, import_child_process.spawn)(execPath, ["--test"], {
     detached: true
   });
+  core.endGroup();
 }
 async function downloadRelease(path) {
+  core.startGroup("Downloading release");
   const downloadURL = assetMap[runnerOS];
   const filename = getFilename(downloadURL);
   const downloadPath = path + "/" + filename;
@@ -7234,8 +7237,11 @@ async function downloadRelease(path) {
   }
   const buffer = await resp.arrayBuffer();
   await fs.promises.writeFile(downloadPath, Buffer.from(buffer));
+  core.info("Downloaded release to " + downloadPath);
+  core.endGroup();
 }
 async function downloadArifact(path) {
+  core.startGroup("Downloading artifact");
   try {
     artifactClient.downloadArtifact("server", path, {
       createArtifactFolder: false
@@ -7245,6 +7251,7 @@ async function downloadArifact(path) {
     core.info("Artifact may not exist, downloading from release");
     return false;
   }
+  core.endGroup();
 }
 run().catch((error) => core.setFailed(error.message));
 /*!

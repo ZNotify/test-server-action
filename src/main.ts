@@ -30,14 +30,17 @@ async function run() {
 }
 
 async function execBinary(path: string) {
+    core.startGroup('Executing binary');
     const filename = getFilename(assetMap[runnerOS as OS]);
     const execPath = path + '/' + filename;
     spawn(execPath, ["--test"], {
         detached: true,
     })
+    core.endGroup();
 }
 
 async function downloadRelease(path: string) {
+    core.startGroup('Downloading release');
     const downloadURL = assetMap[runnerOS as OS];
     const filename = getFilename(downloadURL);
     const downloadPath = path + '/' + filename;
@@ -48,9 +51,12 @@ async function downloadRelease(path: string) {
     }
     const buffer = await resp.arrayBuffer();
     await fs.promises.writeFile(downloadPath, Buffer.from(buffer));
+    core.info('Downloaded release to ' + downloadPath);
+    core.endGroup();
 }
 
 async function downloadArifact(path: string): Promise<Boolean> {
+    core.startGroup('Downloading artifact');
     try {
         artifactClient.downloadArtifact('server', path, {
             createArtifactFolder: false
@@ -60,6 +66,7 @@ async function downloadArifact(path: string): Promise<Boolean> {
         core.info('Artifact may not exist, downloading from release');
         return false;
     }
+    core.endGroup();
 }
 
 run().catch(error => core.setFailed(error.message));
