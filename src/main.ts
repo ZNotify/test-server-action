@@ -27,7 +27,7 @@ async function run() {
     if (!da) {
         await downloadRelease(tempPath);
     }
-    await tryGrantPermission();
+    await tryGrantPermission(tempPath);
     await execBinary(tempPath);
 }
 
@@ -77,14 +77,14 @@ async function downloadArifact(path: string): Promise<Boolean> {
     core.endGroup();
 }
 
-async function tryGrantPermission() {
+async function tryGrantPermission(path:string) {
     if (runnerOS === 'Linux') {
         core.startGroup('Granting permission');
-        await exec.exec('chmod', ['+x', './server-linux']);
+        await exec.exec('chmod', ['+x', `${path}/server-linux`]);
         core.endGroup();
     } else if (runnerOS === 'macOS') {
         core.startGroup('Granting permission');
-        await exec.exec('chmod', ['+x', './server-macos']);
+        await exec.exec('chmod', ['+x', `${path}/server-macos`]);
         core.endGroup();
     }
 }
