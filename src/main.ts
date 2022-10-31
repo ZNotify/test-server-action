@@ -37,6 +37,7 @@ async function execBinary(path: string) {
     const execPath = path + '/' + filename;
     const sub = spawn(execPath, ["--test"], {
         detached: true,
+        stdio: 'ignore'
     })
     sub.unref();
     core.endGroup();

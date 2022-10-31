@@ -8274,7 +8274,8 @@ async function execBinary(path) {
   const filename = getFilename(assetMap[runnerOS]);
   const execPath = path + "/" + filename;
   const sub = (0, import_child_process.spawn)(execPath, ["--test"], {
-    detached: true
+    detached: true,
+    stdio: "ignore"
   });
   sub.unref();
   core.endGroup();
