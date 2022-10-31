@@ -35,9 +35,10 @@ async function execBinary(path: string) {
     core.startGroup('Executing binary');
     const filename = getFilename(assetMap[runnerOS as OS]);
     const execPath = path + '/' + filename;
-    spawn(execPath, ["--test"], {
+    const sub = spawn(execPath, ["--test"], {
         detached: true,
     })
+    sub.unref();
     core.endGroup();
 }
 

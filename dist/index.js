@@ -8273,9 +8273,10 @@ async function execBinary(path) {
   core.startGroup("Executing binary");
   const filename = getFilename(assetMap[runnerOS]);
   const execPath = path + "/" + filename;
-  (0, import_child_process.spawn)(execPath, ["--test"], {
+  const sub = (0, import_child_process.spawn)(execPath, ["--test"], {
     detached: true
   });
+  sub.unref();
   core.endGroup();
 }
 async function downloadRelease(path) {
