@@ -759,7 +759,7 @@ var require_tunnel = __commonJS({
     var net = require("net");
     var tls = require("tls");
     var http = require("http");
-    var https = require("https");
+    var https2 = require("https");
     var events = require("events");
     var assert = require("assert");
     var util = require("util");
@@ -781,12 +781,12 @@ var require_tunnel = __commonJS({
     }
     function httpOverHttps(options) {
       var agent = new TunnelingAgent(options);
-      agent.request = https.request;
+      agent.request = https2.request;
       return agent;
     }
     function httpsOverHttps(options) {
       var agent = new TunnelingAgent(options);
-      agent.request = https.request;
+      agent.request = https2.request;
       agent.createSocket = createSecureSocket;
       agent.defaultPort = 443;
       return agent;
@@ -1051,7 +1051,7 @@ var require_lib = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.HttpClientError = exports.getProxyUrl = exports.MediaTypes = exports.Headers = exports.HttpCodes = void 0;
     var http = __importStar(require("http"));
-    var https = __importStar(require("https"));
+    var https2 = __importStar(require("https"));
     var pm = __importStar(require_proxy());
     var tunnel = __importStar(require_tunnel2());
     var HttpCodes;
@@ -1391,7 +1391,7 @@ var require_lib = __commonJS({
         const info2 = {};
         info2.parsedUrl = requestUrl;
         const usingSsl = info2.parsedUrl.protocol === "https:";
-        info2.httpModule = usingSsl ? https : http;
+        info2.httpModule = usingSsl ? https2 : http;
         const defaultPort = usingSsl ? 443 : 80;
         info2.options = {};
         info2.options.host = info2.parsedUrl.hostname;
@@ -1461,11 +1461,11 @@ var require_lib = __commonJS({
         }
         if (this._keepAlive && !agent) {
           const options = { keepAlive: this._keepAlive, maxSockets };
-          agent = usingSsl ? new https.Agent(options) : new http.Agent(options);
+          agent = usingSsl ? new https2.Agent(options) : new http.Agent(options);
           this._agent = agent;
         }
         if (!agent) {
-          agent = usingSsl ? https.globalAgent : http.globalAgent;
+          agent = usingSsl ? https2.globalAgent : http.globalAgent;
         }
         if (usingSsl && this._ignoreSslError) {
           agent.options = Object.assign(agent.options || {}, {
@@ -7198,6 +7198,7 @@ var core = __toESM(require_core());
 var artifact = __toESM(require_artifact_client2());
 var fs = __toESM(require("fs"));
 var import_child_process = require("child_process");
+var https = __toESM(require("https"));
 var artifactClient = artifact.create();
 function getFilename(url) {
   return url.split("/").pop();
@@ -7230,13 +7231,16 @@ async function downloadRelease(path) {
   const downloadURL = assetMap[runnerOS];
   const filename = getFilename(downloadURL);
   const downloadPath = path + "/" + filename;
-  const resp = await fetch(downloadURL);
-  if (!resp.ok) {
-    core.setFailed("Failed to download release");
-    throw new Error(`unexpected response ${resp.statusText}`);
-  }
-  const buffer = await resp.arrayBuffer();
-  await fs.promises.writeFile(downloadPath, Buffer.from(buffer));
+  await new Promise((resolve, reject) => {
+    https.get(downloadURL, (res) => {
+      const fileStream = fs.createWriteStream(downloadPath);
+      res.pipe(fileStream);
+      fileStream.on("finish", () => {
+        fileStream.close();
+        resolve();
+      });
+    });
+  });
   core.info("Downloaded release to " + downloadPath);
   core.endGroup();
 }

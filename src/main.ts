@@ -3,6 +3,7 @@ import * as artifact from '@actions/artifact';
 import * as fs from 'fs';
 import * as exec from '@actions/exec';
 import { spawn } from 'child_process';
+import * as https from 'https';
 
 const artifactClient = artifact.create();
 
@@ -44,13 +45,18 @@ async function downloadRelease(path: string) {
     const downloadURL = assetMap[runnerOS as OS];
     const filename = getFilename(downloadURL);
     const downloadPath = path + '/' + filename;
-    const resp = await fetch(downloadURL);
-    if (!resp.ok) {
-        core.setFailed('Failed to download release');
-        throw new Error(`unexpected response ${resp.statusText}`);
-    }
-    const buffer = await resp.arrayBuffer();
-    await fs.promises.writeFile(downloadPath, Buffer.from(buffer));
+    
+    await new Promise<void>((resolve, reject) => {
+        https.get(downloadURL, (res) => {
+            const fileStream = fs.createWriteStream(downloadPath);
+            res.pipe(fileStream);
+            fileStream.on('finish', () => {
+                fileStream.close();
+                resolve();
+            });
+        })
+    })
+
     core.info('Downloaded release to ' + downloadPath);
     core.endGroup();
 }
