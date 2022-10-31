@@ -3,7 +3,7 @@ import * as artifact from '@actions/artifact';
 import * as fs from 'fs';
 import * as exec from '@actions/exec';
 import { spawn } from 'child_process';
-import * as https from 'https';
+import axios from 'axios';
 
 const artifactClient = artifact.create();
 
@@ -35,11 +35,13 @@ async function execBinary(path: string) {
     core.startGroup('Executing binary');
     const filename = getFilename(assetMap[runnerOS as OS]);
     const execPath = path + '/' + filename;
-    const sub = spawn(execPath, ["--test"], {
+    const sub = await spawn(execPath, ["--test"], {
         detached: true,
-        stdio: 'ignore'
+        stdio: 'ignore',
+        windowsHide: true,
     })
     sub.unref();
+
     core.endGroup();
 }
 
@@ -48,19 +50,30 @@ async function downloadRelease(path: string) {
     const downloadURL = assetMap[runnerOS as OS];
     const filename = getFilename(downloadURL);
     const downloadPath = path + '/' + filename;
-    
-    await new Promise<void>((resolve, reject) => {
-        https.get(downloadURL, (res) => {
-            const fileStream = fs.createWriteStream(downloadPath);
-            res.pipe(fileStream);
-            fileStream.on('finish', () => {
-                fileStream.close();
-                resolve();
-            });
-        })
+
+    const writer = fs.createWriteStream(downloadPath);
+
+    const resp = await axios.get(downloadURL, {
+        responseType: 'stream'
     })
 
-    core.info('Downloaded release to ' + downloadPath);
+    await new Promise<void>((resolve, reject) => {
+        resp.data.pipe(writer);
+        let error: Error | null = null;
+        writer.on('error', err => {
+            error = err;
+            core.setFailed(err.message);
+            writer.close();
+            reject(err);
+        });
+        writer.on('close', () => {
+            if (!error) {
+                core.info('Downloaded release to ' + downloadPath);
+                resolve();
+            }
+        });
+    })
+
     core.endGroup();
 }
 
@@ -79,7 +92,7 @@ async function downloadArifact(path: string): Promise<Boolean> {
     core.endGroup();
 }
 
-async function tryGrantPermission(path:string) {
+async function tryGrantPermission(path: string) {
     if (runnerOS === 'Linux') {
         core.startGroup('Granting permission');
         await exec.exec('chmod', ['+x', `${path}/server-linux`]);

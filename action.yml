@@ -6,6 +6,7 @@ description: "Setup a test server of Notify."
 runs:
   using: "node16"
   main: "dist/index.js"
+  post: "dist/post.js"
 
 
 branding:
