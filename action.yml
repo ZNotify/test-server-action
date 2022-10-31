@@ -4,56 +4,8 @@ description: "Setup a test server of Notify."
 
 
 runs:
-  using: "composite"
-  steps:
-    - uses: xSAVIKx/artifact-exists-action@v0
-      id: exist
-      with:
-        name: 'server'
-
-    - uses: actions/download-artifact@v3
-      if: steps.exist.outputs.exists == 'true'
-      with:
-        name: 'server'
-    
-    - name: Install wget on Windows
-      shell: bash
-      if: steps.exist.outputs.exists != 'true' && runner.os == 'Windows'
-      run: choco install wget
-
-    - name: Download server
-      shell: bash
-      if: steps.exist.outputs.exists != 'true'
-      run: |
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          wget -q -O server-windows.exe https://github.com/ZNotify/server/releases/download/latest/server-windows.exe
-        elif [ "$RUNNER_OS" == "Linux" ]; then
-          wget -q -O server-linux https://github.com/ZNotify/server/releases/download/latest/server-linux
-        elif [ "$RUNNER_OS" == "macOS" ]; then
-          wget -q -O server-macos https://github.com/ZNotify/server/releases/download/latest/server-macos
-        fi
-        
-
-    - name: Run on Windows
-      shell: bash
-      if: runner.os == 'Windows'
-      run: ./server-windows &
-      env:
-        TEST: "true"
-    
-    - name: Run on MacOS
-      shell: bash
-      if: runner.os == 'macOS'
-      run: chmod +x server-macos && ./server-macos &
-      env:
-        TEST: "true"
-
-    - name: Run on Linux
-      shell: bash
-      if: runner.os == 'Linux'
-      run: chmod +x server-linux && ./server-linux &
-      env:
-        TEST: "true"
+  using: "node16"
+  main: "dist/index.js"
 
 
 branding:
