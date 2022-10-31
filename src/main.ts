@@ -58,9 +58,10 @@ async function downloadRelease(path: string) {
 async function downloadArifact(path: string): Promise<Boolean> {
     core.startGroup('Downloading artifact');
     try {
-        artifactClient.downloadArtifact('server', path, {
+        const downloadResponse = await artifactClient.downloadArtifact('server', path, {
             createArtifactFolder: false
         });
+        core.info(`Artifact ${downloadResponse.artifactName} exists.`);
         return true;
     } catch (error) {
         core.info('Artifact may not exist, downloading from release');
