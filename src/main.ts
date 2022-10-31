@@ -27,6 +27,7 @@ async function run() {
     if (!da) {
         await downloadRelease(tempPath);
     }
+    await tryGrantPermission();
     await execBinary(tempPath);
 }
 
@@ -74,6 +75,18 @@ async function downloadArifact(path: string): Promise<Boolean> {
         return false;
     }
     core.endGroup();
+}
+
+async function tryGrantPermission() {
+    if (runnerOS === 'Linux') {
+        core.startGroup('Granting permission');
+        await exec.exec('chmod', ['+x', './server-linux']);
+        core.endGroup();
+    } else if (runnerOS === 'macOS') {
+        core.startGroup('Granting permission');
+        await exec.exec('chmod', ['+x', './server-macos']);
+        core.endGroup();
+    }
 }
 
 run().catch(error => core.setFailed(error.message));
