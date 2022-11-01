@@ -1,9 +1,10 @@
-import * as core from '@actions/core';
-import * as artifact from '@actions/artifact';
-import * as fs from 'fs';
-import * as exec from '@actions/exec';
+import core from '@actions/core';
+import artifact from '@actions/artifact';
+import fs from 'fs';
+import exec from '@actions/exec';
 import { spawn } from 'child_process';
 import axios from 'axios';
+import waitPort from 'wait-port';
 
 const artifactClient = artifact.create();
 
@@ -23,12 +24,26 @@ const runnerOS = process.env['RUNNER_OS'];
 
 async function run() {
     const tempPath = await fs.promises.mkdtemp('server');
+    core.saveState('tempPath', tempPath);
+
     const da = await downloadArifact(tempPath);
     if (!da) {
         await downloadRelease(tempPath);
     }
     await tryGrantPermission(tempPath);
     await execBinary(tempPath);
+}
+
+async function wait() {
+    core.startGroup('Waiting server up');
+    const time = Date.now();
+
+    const ret = await waitPort({ host: 'localhost', port: 14444 })
+    if (!ret.open) {
+        core.setFailed('Server failed to start');
+    }
+
+    core.endGroup();
 }
 
 async function execBinary(path: string) {
@@ -40,6 +55,11 @@ async function execBinary(path: string) {
         stdio: 'ignore',
         windowsHide: true,
     })
+
+    const pid = sub.pid;
+    core.info(`Spawned process with PID ${pid}`);
+    core.saveState('pid', pid?.toString() ?? '');
+
     sub.unref();
 
     core.endGroup();
