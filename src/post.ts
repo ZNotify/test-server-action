@@ -14,7 +14,7 @@ async function run() {
 
     if (path) {
         // read log
-        const logPath = path + '/data/app.log';
+        const logPath = 'data/app.log';
         const log = await fs.promises.readFile(logPath, 'utf-8');
         core.summary.addCodeBlock(log, 'log');
     }
