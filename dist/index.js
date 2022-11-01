@@ -1264,12 +1264,12 @@ var require_lib = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info = this._prepareRequest(verb, parsedUrl, headers);
+          let info2 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info, data);
+            response = yield this.requestRaw(info2, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler of this.handlers) {
@@ -1279,7 +1279,7 @@ var require_lib = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info, data);
+                return authenticationHandler.handleAuthentication(this, info2, data);
               } else {
                 return response;
               }
@@ -1302,8 +1302,8 @@ var require_lib = __commonJS({
                   }
                 }
               }
-              info = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info, data);
+              info2 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info2, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -1324,7 +1324,7 @@ var require_lib = __commonJS({
         }
         this._disposed = true;
       }
-      requestRaw(info, data) {
+      requestRaw(info2, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -1336,16 +1336,16 @@ var require_lib = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info, data, callbackForResult);
+            this.requestRawWithCallback(info2, data, callbackForResult);
           });
         });
       }
-      requestRawWithCallback(info, data, onResult) {
+      requestRawWithCallback(info2, data, onResult) {
         if (typeof data === "string") {
-          if (!info.options.headers) {
-            info.options.headers = {};
+          if (!info2.options.headers) {
+            info2.options.headers = {};
           }
-          info.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info2.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -1354,7 +1354,7 @@ var require_lib = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info.httpModule.request(info.options, (msg) => {
+        const req = info2.httpModule.request(info2.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -1366,7 +1366,7 @@ var require_lib = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info.options.path}`));
+          handleResult(new Error(`Request timeout: ${info2.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -1388,27 +1388,27 @@ var require_lib = __commonJS({
         return this._getAgent(parsedUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info = {};
-        info.parsedUrl = requestUrl;
-        const usingSsl = info.parsedUrl.protocol === "https:";
-        info.httpModule = usingSsl ? https2 : http2;
+        const info2 = {};
+        info2.parsedUrl = requestUrl;
+        const usingSsl = info2.parsedUrl.protocol === "https:";
+        info2.httpModule = usingSsl ? https2 : http2;
         const defaultPort = usingSsl ? 443 : 80;
-        info.options = {};
-        info.options.host = info.parsedUrl.hostname;
-        info.options.port = info.parsedUrl.port ? parseInt(info.parsedUrl.port) : defaultPort;
-        info.options.path = (info.parsedUrl.pathname || "") + (info.parsedUrl.search || "");
-        info.options.method = method;
-        info.options.headers = this._mergeHeaders(headers);
+        info2.options = {};
+        info2.options.host = info2.parsedUrl.hostname;
+        info2.options.port = info2.parsedUrl.port ? parseInt(info2.parsedUrl.port) : defaultPort;
+        info2.options.path = (info2.parsedUrl.pathname || "") + (info2.parsedUrl.search || "");
+        info2.options.method = method;
+        info2.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info.options.headers["user-agent"] = this.userAgent;
+          info2.options.headers["user-agent"] = this.userAgent;
         }
-        info.options.agent = this._getAgent(info.parsedUrl);
+        info2.options.agent = this._getAgent(info2.parsedUrl);
         if (this.handlers) {
           for (const handler of this.handlers) {
-            handler.prepareRequest(info.options);
+            handler.prepareRequest(info2.options);
           }
         }
-        return info;
+        return info2;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -2091,11 +2091,11 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issue("echo", enabled ? "on" : "off");
     }
     exports.setCommandEcho = setCommandEcho;
-    function setFailed(message) {
+    function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
       error(message);
     }
-    exports.setFailed = setFailed;
+    exports.setFailed = setFailed2;
     function isDebug() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
@@ -2116,39 +2116,39 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("notice", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports.notice = notice;
-    function info(message) {
+    function info2(message) {
       process.stdout.write(message + os.EOL);
     }
-    exports.info = info;
-    function startGroup(name) {
+    exports.info = info2;
+    function startGroup2(name) {
       command_1.issue("group", name);
     }
-    exports.startGroup = startGroup;
-    function endGroup() {
+    exports.startGroup = startGroup2;
+    function endGroup2() {
       command_1.issue("endgroup");
     }
-    exports.endGroup = endGroup;
+    exports.endGroup = endGroup2;
     function group(name, fn) {
       return __awaiter(this, void 0, void 0, function* () {
-        startGroup(name);
+        startGroup2(name);
         let result;
         try {
           result = yield fn();
         } finally {
-          endGroup();
+          endGroup2();
         }
         return result;
       });
     }
     exports.group = group;
-    function saveState(name, value) {
+    function saveState2(name, value) {
       const filePath = process.env["GITHUB_STATE"] || "";
       if (filePath) {
         return file_command_1.issueFileCommand("STATE", file_command_1.prepareKeyValueMessage(name, value));
       }
       command_1.issueCommand("save-state", { name }, utils_1.toCommandValue(value));
     }
-    exports.saveState = saveState;
+    exports.saveState = saveState2;
     function getState(name) {
       return process.env[`STATE_${name}`] || "";
     }
@@ -7186,10 +7186,10 @@ var require_artifact_client2 = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.create = void 0;
     var artifact_client_1 = require_artifact_client();
-    function create() {
+    function create2() {
       return artifact_client_1.DefaultArtifactClient.create();
     }
-    exports.create = create;
+    exports.create = create2;
   }
 });
 
@@ -7435,7 +7435,7 @@ var require_io = __commonJS({
     var path = __importStar(require("path"));
     var util_1 = require("util");
     var ioUtil = __importStar(require_io_util());
-    var exec2 = util_1.promisify(childProcess.exec);
+    var exec3 = util_1.promisify(childProcess.exec);
     var execFile = util_1.promisify(childProcess.execFile);
     function cp(source, dest, options = {}) {
       return __awaiter(this, void 0, void 0, function* () {
@@ -7494,11 +7494,11 @@ var require_io = __commonJS({
           try {
             const cmdPath = ioUtil.getCmdPath();
             if (yield ioUtil.isDirectory(inputPath, true)) {
-              yield exec2(`${cmdPath} /s /c "rd /s /q "%inputPath%""`, {
+              yield exec3(`${cmdPath} /s /c "rd /s /q "%inputPath%""`, {
                 env: { inputPath }
               });
             } else {
-              yield exec2(`${cmdPath} /s /c "del /f /a "%inputPath%""`, {
+              yield exec3(`${cmdPath} /s /c "del /f /a "%inputPath%""`, {
                 env: { inputPath }
               });
             }
@@ -8194,7 +8194,7 @@ var require_exec = __commonJS({
     exports.getExecOutput = exports.exec = void 0;
     var string_decoder_1 = require("string_decoder");
     var tr = __importStar(require_toolrunner());
-    function exec2(commandLine, args, options) {
+    function exec3(commandLine, args, options) {
       return __awaiter(this, void 0, void 0, function* () {
         const commandArgs = tr.argStringToArray(commandLine);
         if (commandArgs.length === 0) {
@@ -8206,7 +8206,7 @@ var require_exec = __commonJS({
         return runner.exec();
       });
     }
-    exports.exec = exec2;
+    exports.exec = exec3;
     function getExecOutput(commandLine, args, options) {
       var _a, _b;
       return __awaiter(this, void 0, void 0, function* () {
@@ -8229,7 +8229,7 @@ var require_exec = __commonJS({
           }
         };
         const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
-        const exitCode = yield exec2(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        const exitCode = yield exec3(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
         stdout += stdoutDecoder.end();
         stderr += stderrDecoder.end();
         return {
@@ -20670,10 +20670,10 @@ Host: ${params.host}\r
 });
 
 // src/main.ts
-var import_core = __toESM(require_core());
-var import_artifact = __toESM(require_artifact_client2());
-var import_fs = __toESM(require("fs"));
-var import_exec = __toESM(require_exec());
+var core = __toESM(require_core());
+var artifact = __toESM(require_artifact_client2());
+var fs = __toESM(require("fs"));
+var exec = __toESM(require_exec());
 var import_child_process = require("child_process");
 
 // node_modules/axios/lib/helpers/bind.js
@@ -23118,7 +23118,7 @@ function createInstance(defaultConfig) {
   const instance = bind(Axios_default.prototype.request, context);
   utils_default.extend(instance, Axios_default.prototype, context, { allOwnKeys: true });
   utils_default.extend(instance, context, null, { allOwnKeys: true });
-  instance.create = function create(instanceConfig) {
+  instance.create = function create2(instanceConfig) {
     return createInstance(mergeConfig(defaultConfig, instanceConfig));
   };
   return instance;
@@ -23132,8 +23132,8 @@ axios.VERSION = VERSION;
 axios.toFormData = toFormData_default;
 axios.AxiosError = AxiosError_default;
 axios.Cancel = axios.CanceledError;
-axios.all = function all(promises) {
-  return Promise.all(promises);
+axios.all = function all(promises2) {
+  return Promise.all(promises2);
 };
 axios.spread = spread;
 axios.isAxiosError = isAxiosError;
@@ -23160,7 +23160,7 @@ var axios_default2 = axios_default;
 
 // src/main.ts
 var import_wait_port = __toESM(require_wait_port());
-var artifactClient = import_artifact.default.create();
+var artifactClient = artifact.create();
 function getFilename(url2) {
   return url2.split("/").pop();
 }
@@ -23171,8 +23171,8 @@ var assetMap = {
 };
 var runnerOS = process.env["RUNNER_OS"];
 async function run() {
-  const tempPath = await import_fs.default.promises.mkdtemp("server");
-  import_core.default.saveState("tempPath", tempPath);
+  const tempPath = await fs.promises.mkdtemp("server");
+  core.saveState("tempPath", tempPath);
   const da = await downloadArifact(tempPath);
   if (!da) {
     await downloadRelease(tempPath);
@@ -23181,7 +23181,7 @@ async function run() {
   await execBinary(tempPath);
 }
 async function execBinary(path) {
-  import_core.default.startGroup("Executing binary");
+  core.startGroup("Executing binary");
   const filename = getFilename(assetMap[runnerOS]);
   const execPath = path + "/" + filename;
   const sub = await (0, import_child_process.spawn)(execPath, ["--test"], {
@@ -23190,17 +23190,17 @@ async function execBinary(path) {
     windowsHide: true
   });
   const pid = sub.pid;
-  import_core.default.info(`Spawned process with PID ${pid}`);
-  import_core.default.saveState("pid", (pid == null ? void 0 : pid.toString()) ?? "");
+  core.info(`Spawned process with PID ${pid}`);
+  core.saveState("pid", (pid == null ? void 0 : pid.toString()) ?? "");
   sub.unref();
-  import_core.default.endGroup();
+  core.endGroup();
 }
 async function downloadRelease(path) {
-  import_core.default.startGroup("Downloading release");
+  core.startGroup("Downloading release");
   const downloadURL = assetMap[runnerOS];
   const filename = getFilename(downloadURL);
   const downloadPath = path + "/" + filename;
-  const writer = import_fs.default.createWriteStream(downloadPath);
+  const writer = fs.createWriteStream(downloadPath);
   const resp = await axios_default2.get(downloadURL, {
     responseType: "stream"
   });
@@ -23209,45 +23209,45 @@ async function downloadRelease(path) {
     let error = null;
     writer.on("error", (err) => {
       error = err;
-      import_core.default.setFailed(err.message);
+      core.setFailed(err.message);
       writer.close();
       reject(err);
     });
     writer.on("close", () => {
       if (!error) {
-        import_core.default.info("Downloaded release to " + downloadPath);
+        core.info("Downloaded release to " + downloadPath);
         resolve();
       }
     });
   });
-  import_core.default.endGroup();
+  core.endGroup();
 }
 async function downloadArifact(path) {
-  import_core.default.startGroup("Downloading artifact");
+  core.startGroup("Downloading artifact");
   try {
     const downloadResponse = await artifactClient.downloadArtifact("server", path, {
       createArtifactFolder: false
     });
-    import_core.default.info(`Artifact ${downloadResponse.artifactName} exists.`);
+    core.info(`Artifact ${downloadResponse.artifactName} exists.`);
     return true;
   } catch (error) {
-    import_core.default.info("Artifact may not exist, downloading from release");
+    core.info("Artifact may not exist, downloading from release");
     return false;
   }
-  import_core.default.endGroup();
+  core.endGroup();
 }
 async function tryGrantPermission(path) {
   if (runnerOS === "Linux") {
-    import_core.default.startGroup("Granting permission");
-    await import_exec.default.exec("chmod", ["+x", `${path}/server-linux`]);
-    import_core.default.endGroup();
+    core.startGroup("Granting permission");
+    await exec.exec("chmod", ["+x", `${path}/server-linux`]);
+    core.endGroup();
   } else if (runnerOS === "macOS") {
-    import_core.default.startGroup("Granting permission");
-    await import_exec.default.exec("chmod", ["+x", `${path}/server-macos`]);
-    import_core.default.endGroup();
+    core.startGroup("Granting permission");
+    await exec.exec("chmod", ["+x", `${path}/server-macos`]);
+    core.endGroup();
   }
 }
-run().catch((error) => import_core.default.setFailed(error.message));
+run().catch((error) => core.setFailed(error.message));
 /*!
  * Tmp
  *

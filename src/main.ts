@@ -1,7 +1,7 @@
-import core from '@actions/core';
-import artifact from '@actions/artifact';
-import fs from 'fs';
-import exec from '@actions/exec';
+import * as core from '@actions/core';
+import * as artifact from '@actions/artifact';
+import * as fs from 'fs';
+import * as exec from '@actions/exec';
 import { spawn } from 'child_process';
 import axios from 'axios';
 import waitPort from 'wait-port';
