@@ -15,7 +15,7 @@ const artifactClient = artifact.create();
 type OS = 'Linux' | 'macOS' | 'Windows';
 
 function getFilename(url: string) {
-    return url.split('/').pop();
+    return url.split('/').pop()!;
 }
 
 const assetMap: { [key: string]: string } = {
@@ -54,8 +54,7 @@ async function wait() {
 async function execBinary(path: string) {
     core.startGroup('Executing binary');
     const filename = getFilename(assetMap[runnerOS as OS]);
-    const execPath = path + '/' + filename;
-    const sub = await spawn(execPath, ["--test"], {
+    const sub = spawn(filename, ["--test"], {
         detached: true,
         stdio: 'ignore',
         windowsHide: true,
