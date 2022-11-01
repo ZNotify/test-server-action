@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import * as fs from 'fs';
+import waitPort from 'wait-port';
 
 async function run() {
     const path = core.getState('tempPath');
@@ -11,6 +12,11 @@ async function run() {
         core.summary.addHeading('Server log');
         core.summary.addCodeBlock(log, 'log');
         core.summary.write();
+    }
+
+    const result = await waitPort({ host: 'localhost', port: 14444 });
+    if(!result.open){
+        core.setFailed('Server panic during test');
     }
 }
 
