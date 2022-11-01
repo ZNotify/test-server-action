@@ -54,7 +54,9 @@ async function wait() {
 async function execBinary(path: string) {
     core.startGroup('Executing binary');
     const filename = getFilename(assetMap[runnerOS as OS]);
-    const sub = spawn(filename, ["--test"], {
+    const execPath = path + '/' + filename;
+
+    const sub = spawn(execPath, ["--test"], {
         detached: true,
         stdio: 'ignore',
         windowsHide: true,
