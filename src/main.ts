@@ -5,6 +5,10 @@ import * as exec from '@actions/exec';
 import { spawn } from 'child_process';
 import axios from 'axios';
 import waitPort from 'wait-port';
+// @ts-ignore
+import sourceMapSupport from 'source-map-support'
+
+sourceMapSupport.install()
 
 const artifactClient = artifact.create();
 
@@ -32,6 +36,7 @@ async function run() {
     }
     await tryGrantPermission(tempPath);
     await execBinary(tempPath);
+    await wait();
 }
 
 async function wait() {
@@ -54,6 +59,7 @@ async function execBinary(path: string) {
         detached: true,
         stdio: 'ignore',
         windowsHide: true,
+        cwd: path
     })
 
     const pid = sub.pid;

@@ -6,8 +6,8 @@
   "author": "Zxilly <zxilly@outlook.com>",
   "license": "UNLICENSED",
   "scripts": {
-    "build:main": "esbuild src/main.ts --bundle --sourcemap --platform=node --target=node16 --outfile=dist/index.js",
-    "build:post": "esbuild src/post.ts --bundle --sourcemap --platform=node --target=node16 --outfile=dist/post.js",
+    "build:main": "esbuild src/main.ts --bundle --sourcemap --platform=node --minify --target=node16 --outfile=dist/index.js",
+    "build:post": "esbuild src/post.ts --bundle --sourcemap --platform=node --minify --target=node16 --outfile=dist/post.js",
     "build": "yarn build:main && yarn build:post"
   },
   "devDependencies": {
@@ -18,9 +18,8 @@
     "@actions/io": "^1.1.2",
     "@types/node": "^18.11.8",
     "esbuild": "^0.15.12",
-    "typescript": "^4.8.4"
-  },
-  "dependencies": {
+    "source-map-support": "^0.5.21",
+    "typescript": "^4.8.4",
     "axios": "^1.1.3",
     "wait-port": "^1.0.4"
   }
