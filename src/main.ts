@@ -105,28 +105,33 @@ async function downloadRelease(path: string) {
 async function downloadArifact(path: string): Promise<Boolean> {
     core.startGroup('Downloading artifact');
     try {
-        const downloadResponse = await artifactClient.downloadArtifact('server', path, {
+        const downloadResponse = await artifactClient.downloadArtifact('test-server', path, {
             createArtifactFolder: false
         });
         core.info(`Artifact ${downloadResponse.artifactName} exists.`);
+        core.endGroup();
         return true;
     } catch (error) {
         core.info('Artifact may not exist, downloading from release');
+        core.endGroup();
         return false;
     }
-    core.endGroup();
 }
 
 async function tryGrantPermission(path: string) {
+    const filename = getFilename(assetMap[runnerOS]);
+    core.startGroup('Granting permission');
     if (runnerOS === 'Linux') {
         core.startGroup('Granting permission');
-        await exec.exec('chmod', ['+x', `${path}/server-linux`]);
-        core.endGroup();
+        await exec.exec('chmod', ['+x', `${path}/${filename}`]);
+        core.info('Granted permission to ' + filename);
     } else if (runnerOS === 'macOS') {
-        core.startGroup('Granting permission');
-        await exec.exec('chmod', ['+x', `${path}/server-macos`]);
-        core.endGroup();
+        await exec.exec('chmod', ['+x', `${path}/${filename}`]);
+        core.info('Granted permission to ' + filename);
+    } else {
+        core.info('No need to grant permission');
     }
+    core.endGroup();
 }
 
 run().catch(error => core.setFailed(error.message));

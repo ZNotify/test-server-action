@@ -8,14 +8,19 @@ async function run() {
     if (path) {
         // read log
         const logPath = 'data/app.log';
-        const log = await fs.promises.readFile(logPath, 'utf-8');
-        core.summary.addHeading('Server log');
-        core.summary.addCodeBlock(log, 'log');
-        core.summary.write();
+        // check log file
+        if (!fs.existsSync(logPath)) {
+            core.warning('Log file not found');
+        } else {
+            const log = await fs.promises.readFile(logPath, 'utf-8');
+            core.summary.addHeading('Server log');
+            core.summary.addCodeBlock(log, 'log');
+            core.summary.write();
+        }
     }
 
     const result = await waitPort({ host: 'localhost', port: 14444 });
-    if(!result.open){
+    if (!result.open) {
         core.setFailed('Server panic during test');
     }
 }
