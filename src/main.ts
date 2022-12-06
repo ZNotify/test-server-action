@@ -18,13 +18,13 @@ function getFilename(url: string) {
     return url.split('/').pop()!;
 }
 
-const assetMap: { [key: string]: string } = {
-    "Linux": "https://github.com/ZNotify/server/releases/download/latest/server-linux",
-    "Windows": "https://github.com/ZNotify/server/releases/download/latest/server-windows.exe",
-    "macOS": "https://github.com/ZNotify/server/releases/download/latest/server-macos"
+const assetMap: { [key in OS]: string } = {
+    "Linux": "https://github.com/ZNotify/server/releases/download/latest/test-server-linux",
+    "Windows": "https://github.com/ZNotify/server/releases/download/latest/test-server-windows.exe",
+    "macOS": "https://github.com/ZNotify/server/releases/download/latest/test-server-macos"
 }
 
-const runnerOS = process.env['RUNNER_OS'];
+const runnerOS = process.env['RUNNER_OS'] as OS;
 
 async function run() {
     const tempPath = await fs.promises.mkdtemp('server');
@@ -41,7 +41,6 @@ async function run() {
 
 async function wait() {
     core.startGroup('Waiting server up');
-    const time = Date.now();
 
     const ret = await waitPort({ host: 'localhost', port: 14444 })
     if (!ret.open) {
@@ -53,10 +52,10 @@ async function wait() {
 
 async function execBinary(path: string) {
     core.startGroup('Executing binary');
-    const filename = getFilename(assetMap[runnerOS as OS]);
+    const filename = getFilename(assetMap[runnerOS]);
     const execPath = path + '/' + filename;
 
-    const sub = spawn(execPath, ["--test"], {
+    const sub = spawn(execPath, [], {
         detached: true,
         stdio: 'ignore',
         windowsHide: true,
