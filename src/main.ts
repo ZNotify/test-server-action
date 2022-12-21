@@ -65,8 +65,7 @@ async function execBinary(path: string) {
 
     const sub = spawn(execPath, [], {
         detached: true,
-        stdio: 'ignore',
-        shell: true
+        stdio: 'ignore'
     })
 
     const pid = sub.pid;
