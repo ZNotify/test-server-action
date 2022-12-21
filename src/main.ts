@@ -63,17 +63,18 @@ async function execBinary(path: string) {
     const filename = getFilename(assetMap[runnerOS]);
     const execPath = path + '/' + filename;
 
-    const sub = spawn(execPath, [], {
-        detached: true,
-        stdio: 'ignore',
-        windowsHide: true,
-    })
+    // const sub = spawn(execPath, [], {
+    //     detached: true,
+    //     stdio: 'ignore',
+    //     windowsHide: true,
+    // })
 
-    const pid = sub.pid;
-    core.info(`Spawned process with PID ${pid}`);
-    core.saveState('pid', pid?.toString() ?? '');
+    // const pid = sub.pid;
+    // core.info(`Spawned process with PID ${pid}`);
+    // core.saveState('pid', pid?.toString() ?? '');
 
-    sub.unref();
+    // sub.unref();
+    exec.exec(execPath);
 
     core.endGroup();
 }
