@@ -47,6 +47,13 @@ async function wait() {
         core.setFailed('Server failed to start');
     }
 
+    if (runnerOS === 'Windows') {
+        // Windows is too slow to start server
+        core.info('Waiting for server to be ready');
+        await fetch('http://localhost:14444/alive');
+        core.info('Server is ready');
+    }
+
     core.endGroup();
 }
 
