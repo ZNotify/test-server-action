@@ -13,8 +13,8 @@ async function run() {
             core.warning('Log file not found');
         } else {
             const log = await fs.promises.readFile(logPath, 'utf-8');
-            core.summary.addHeading('Server log');
-            core.summary.addCodeBlock(log, 'log');
+            core.summary.addHeading('Server log', 3);
+            core.summary.addDetails("log", `<pre>${log}</pre>`)
             core.summary.write();
         }
     }
