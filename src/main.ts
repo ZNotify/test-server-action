@@ -5,6 +5,7 @@ import * as exec from '@actions/exec';
 import { spawn } from 'child_process';
 import axios from 'axios';
 import waitPort from 'wait-port';
+import fetch from 'node-fetch';
 // @ts-ignore
 import sourceMapSupport from 'source-map-support'
 
