@@ -36,7 +36,8 @@ jobs:
       - uses: ./
 
       - name: Test Port
-        run: curl -v --trace-time http://127.0.0.1:14444/alive
+        shell: bash
+        run: curl -s -v -o tmp --trace-time http://127.0.0.1:14444/alive
   
   test-download-release:
     strategy:
@@ -50,4 +51,5 @@ jobs:
       - uses: ./
       
       - name: Test Port
-        run: curl -v --trace-time http://127.0.0.1:14444/alive
+        shell: bash
+        run: curl -s -v -o tmp --trace-time http://127.0.0.1:14444/alive
