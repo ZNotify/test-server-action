@@ -47,13 +47,23 @@ async function wait() {
     const ret = await waitPort({ host: 'localhost', port: 14444, timeout: 1000 * 5, output: 'silent' })
     if (!ret.open) {
         core.setFailed('Server failed to start');
+    } else {
+        core.info('Server is up');
     }
 
     if (runnerOS === 'Windows') {
         // Windows is too slow to start server
         core.info('Waiting for server to be ready');
-        await fetch('http://localhost:14444/alive');
-        core.info('Server is ready');
+        const controller = new AbortController();
+        const timer = setTimeout(() => {
+            controller.abort();
+        })
+        await fetch('http://localhost:14444/alive', {
+            signal: controller.signal
+        }).then(() => {
+            clearTimeout(timer);
+        });
+        core.info('Windows additional waiting done');
     }
 
     core.endGroup();

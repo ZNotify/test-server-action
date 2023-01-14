@@ -8,7 +8,8 @@
   "scripts": {
     "build:main": "esbuild src/main.ts --bundle --platform=node --minify --target=node16 --outfile=dist/index.js",
     "build:post": "esbuild src/post.ts --bundle --platform=node --minify --target=node16 --outfile=dist/post.js",
-    "build": "yarn build:main && yarn build:post"
+    "build": "yarn build:main && yarn build:post",
+    "update": "yarn build && git add ."
   },
   "devDependencies": {
     "@actions/artifact": "^1.1.1",
