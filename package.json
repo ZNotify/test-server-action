@@ -19,6 +19,7 @@
     "@types/node": "^18.11.18",
     "axios": "^1.2.2",
     "esbuild": "^0.17.0",
+    "husky": "^8.0.3",
     "source-map-support": "^0.5.21",
     "typescript": "^4.9.4",
     "wait-port": "^1.0.4"
@@ -26,5 +27,10 @@
   "packageManager": "yarn@3.3.0",
   "dependencies": {
     "node-fetch": "^3.3.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn build && git add -A ."
+    }
   }
 }

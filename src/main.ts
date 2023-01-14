@@ -44,7 +44,7 @@ async function run() {
 async function wait() {
     core.startGroup('Waiting server up');
 
-    const ret = await waitPort({ host: 'localhost', port: 14444 })
+    const ret = await waitPort({ host: 'localhost', port: 14444, timeout: 1000 * 5 })
     if (!ret.open) {
         core.setFailed('Server failed to start');
     }

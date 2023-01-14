@@ -20,7 +20,7 @@ async function run() {
         }
     }
 
-    const result = await waitPort({ host: 'localhost', port: 14444 });
+    const result = await waitPort({ host: 'localhost', port: 14444, timeout: 10 * 1000 });
     if (!result.open) {
         core.setFailed('Server panic during test');
     }
