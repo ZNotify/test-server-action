@@ -11,14 +11,14 @@
     "build": "yarn build:main && yarn build:post"
   },
   "devDependencies": {
-    "@actions/artifact": "^1.1.0",
+    "@actions/artifact": "^1.1.1",
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.1.1",
     "@actions/io": "^1.1.2",
-    "@types/node": "^18.11.17",
-    "axios": "^1.2.1",
-    "esbuild": "^0.16.10",
+    "@types/node": "^18.11.18",
+    "axios": "^1.2.2",
+    "esbuild": "^0.17.0",
     "source-map-support": "^0.5.21",
     "typescript": "^4.9.4",
     "wait-port": "^1.0.4"

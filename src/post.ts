@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as fs from 'fs';
 import waitPort from 'wait-port';
+import { timeout } from './util';
 
 async function run() {
     const path = core.getState('tempPath');
@@ -13,7 +14,7 @@ async function run() {
             core.warning('Log file not found');
         } else {
             const log = await fs.promises.readFile(logPath, 'utf-8');
-            core.summary.addHeading('Server log', 3);
+            core.summary.addHeading('Server log', 4);
             core.summary.addDetails("log", `<pre>${log}</pre>`)
             core.summary.write();
         }
@@ -26,3 +27,4 @@ async function run() {
 }
 
 run().catch((error) => core.setFailed(error.message));
+timeout();

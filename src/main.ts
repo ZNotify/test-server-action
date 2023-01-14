@@ -8,6 +8,7 @@ import waitPort from 'wait-port';
 import fetch from 'node-fetch';
 // @ts-ignore
 import sourceMapSupport from 'source-map-support'
+import { timeout } from './util';
 
 sourceMapSupport.install()
 
@@ -89,6 +90,11 @@ async function downloadRelease(path: string) {
         responseType: 'stream'
     })
 
+    if (resp.status !== 200) {
+        core.setFailed(`Failed to download release, status: ${resp.status} ${resp.statusText}`);
+        return;
+    }
+
     await new Promise<void>((resolve, reject) => {
         resp.data.pipe(writer);
         let error: Error | null = null;
@@ -129,7 +135,6 @@ async function tryGrantPermission(path: string) {
     const filename = getFilename(assetMap[runnerOS]);
     core.startGroup('Granting permission');
     if (runnerOS === 'Linux') {
-        core.startGroup('Granting permission');
         await exec.exec('chmod', ['+x', `${path}/${filename}`]);
         core.info('Granted permission to ' + filename);
     } else if (runnerOS === 'macOS') {
@@ -141,5 +146,7 @@ async function tryGrantPermission(path: string) {
     core.endGroup();
 }
 
-run().catch(error => core.setFailed(error.message));
 
+
+run().catch(error => core.setFailed(error.message));
+timeout();
