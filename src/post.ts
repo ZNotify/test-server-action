@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import * as fs from 'fs';
 import waitPort from 'wait-port';
-import { timeout } from './util';
+import { cancelTimeout } from './util';
 
 async function run() {
     const path = core.getState('tempPath');
@@ -20,11 +20,15 @@ async function run() {
         }
     }
 
-    const result = await waitPort({ host: 'localhost', port: 14444, timeout: 10 * 1000 });
+    const result = await waitPort({ host: 'localhost', port: 14444, timeout: 10 * 1000, output: 'silent' });
     if (!result.open) {
         core.setFailed('Server panic during test');
     }
 }
 
-timeout();
-run().catch((error) => core.setFailed(error.message));
+run().catch((error) => {
+    core.setFailed(error.message);
+    cancelTimeout();
+}).then(() => {
+    cancelTimeout();
+});

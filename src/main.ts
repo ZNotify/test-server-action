@@ -8,7 +8,7 @@ import waitPort from 'wait-port';
 import fetch from 'node-fetch';
 // @ts-ignore
 import sourceMapSupport from 'source-map-support'
-import { timeout } from './util';
+import { cancelTimeout } from './util';
 
 sourceMapSupport.install()
 
@@ -44,7 +44,7 @@ async function run() {
 async function wait() {
     core.startGroup('Waiting server up');
 
-    const ret = await waitPort({ host: 'localhost', port: 14444, timeout: 1000 * 5 })
+    const ret = await waitPort({ host: 'localhost', port: 14444, timeout: 1000 * 5, output: 'silent' })
     if (!ret.open) {
         core.setFailed('Server failed to start');
     }
@@ -146,6 +146,10 @@ async function tryGrantPermission(path: string) {
     core.endGroup();
 }
 
-timeout();
-run().catch(error => core.setFailed(error.message));
+run().catch((error) => {
+    core.setFailed(error.message);
+    cancelTimeout();
+}).then(() => {
+    cancelTimeout();
+});
 
