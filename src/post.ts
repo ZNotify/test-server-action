@@ -26,5 +26,5 @@ async function run() {
     }
 }
 
-run().catch((error) => core.setFailed(error.message));
 timeout();
+run().catch((error) => core.setFailed(error.message));

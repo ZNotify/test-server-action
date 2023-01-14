@@ -146,7 +146,6 @@ async function tryGrantPermission(path: string) {
     core.endGroup();
 }
 
-
-
-run().catch(error => core.setFailed(error.message));
 timeout();
+run().catch(error => core.setFailed(error.message));
+
