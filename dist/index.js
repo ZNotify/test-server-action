@@ -29490,16 +29490,8 @@ async function wait() {
     core2.info("Server is up");
   }
   if (runnerOS === "Windows") {
-    core2.info("Waiting for server to be ready");
-    const controller = new AbortController();
-    const timer2 = setTimeout(() => {
-      controller.abort();
-    });
-    await fetch("http://localhost:14444/alive", {
-      signal: controller.signal
-    }).then(() => {
-      clearTimeout(timer2);
-    });
+    core2.info("Windows additional waiting");
+    await fetch("http://localhost:14444/alive");
     core2.info("Windows additional waiting done");
   }
   core2.endGroup();
@@ -29509,7 +29501,9 @@ async function execBinary(tmpDir) {
   const execPath = path.join(tmpDir, res.filename);
   const sub = (0, import_child_process.spawn)(execPath, [], {
     detached: true,
-    stdio: "ignore"
+    stdio: "ignore",
+    windowsHide: true,
+    shell: true
   });
   const pid = sub.pid;
   core2.info(`Spawned process with PID ${pid}`);

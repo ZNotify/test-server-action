@@ -39,16 +39,8 @@ async function wait() {
 
     if (runnerOS === 'Windows') {
         // Windows is too slow to start server
-        core.info('Waiting for server to be ready');
-        const controller = new AbortController();
-        const timer = setTimeout(() => {
-            controller.abort();
-        })
-        await fetch('http://localhost:14444/alive', {
-            signal: controller.signal
-        }).then(() => {
-            clearTimeout(timer);
-        });
+        core.info('Windows additional waiting');
+        await fetch('http://localhost:14444/alive');
         core.info('Windows additional waiting done');
     }
 
@@ -62,7 +54,9 @@ async function execBinary(tmpDir: string) {
 
     const sub = spawn(execPath, [], {
         detached: true,
-        stdio: 'ignore'
+        stdio: 'ignore',
+        windowsHide: true,
+        shell: true
     })
 
     const pid = sub.pid;
