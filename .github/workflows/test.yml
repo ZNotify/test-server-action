@@ -9,18 +9,30 @@ jobs:
     steps:
       - name: Download release
         run: |
-          wget -q -O server-linux https://github.com/ZNotify/server/releases/download/latest/server-linux
-          wget -q -O server-macos https://github.com/ZNotify/server/releases/download/latest/server-macos
-          wget -q -O server-windows.exe https://github.com/ZNotify/server/releases/download/latest/server-windows.exe
+          wget -q -O test-server-linux https://github.com/ZNotify/server/releases/download/latest/test-server-linux
+          wget -q -O test-server-macos https://github.com/ZNotify/server/releases/download/latest/test-server-macos
+          wget -q -O test-server-windows.exe https://github.com/ZNotify/server/releases/download/latest/test-server-windows.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: server
+          name: server-linux
           path: |
-            server-linux
-            server-windows.exe
-            server-macos
+            test-server-linux
+          if-no-files-found: error
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: server-macos
+          path: |
+            test-server-macos
+          if-no-files-found: error
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: server-windows
+          path: |
+            test-server-windows.exe
           if-no-files-found: error
 
   test-download-artifact:
