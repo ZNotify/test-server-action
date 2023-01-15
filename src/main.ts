@@ -1,17 +1,13 @@
 import core from '@actions/core';
-import artifact from '@actions/artifact';
-import fs from 'fs';
-import exec from '@actions/exec';
+import * as artifact from '@actions/artifact';
+import * as fs from 'fs';
+import * as exec from '@actions/exec';
 import { spawn } from 'child_process';
-import path from 'path';
+import * as path from 'path';
 import axios from 'axios';
 import waitPort from 'wait-port';
 import fetch from 'node-fetch';
-// @ts-ignore
-import sourceMapSupport from 'source-map-support'
 import { cancelTimeout, currentResource, runnerOS } from './util';
-
-sourceMapSupport.install()
 
 const artifactClient = artifact.create();
 
@@ -61,7 +57,7 @@ async function wait() {
 
 async function execBinary(tmpDir: string) {
     core.startGroup('Executing binary');
-    
+
     const execPath = path.join(tmpDir, res.filename);
 
     const sub = spawn(execPath, [], {
