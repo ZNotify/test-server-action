@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 import * as artifact from '@actions/artifact';
 import * as fs from 'fs';
 import * as exec from '@actions/exec';
