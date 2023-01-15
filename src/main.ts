@@ -1,32 +1,22 @@
-import * as core from '@actions/core';
-import * as artifact from '@actions/artifact';
-import * as fs from 'fs';
-import * as exec from '@actions/exec';
+import core from '@actions/core';
+import artifact from '@actions/artifact';
+import fs from 'fs';
+import exec from '@actions/exec';
 import { spawn } from 'child_process';
+import path from 'path';
 import axios from 'axios';
 import waitPort from 'wait-port';
 import fetch from 'node-fetch';
 // @ts-ignore
 import sourceMapSupport from 'source-map-support'
-import { cancelTimeout } from './util';
+import { cancelTimeout, currentResource, runnerOS } from './util';
 
 sourceMapSupport.install()
 
 const artifactClient = artifact.create();
 
-type OS = 'Linux' | 'macOS' | 'Windows';
+const res = currentResource;
 
-function getFilename(url: string) {
-    return url.split('/').pop()!;
-}
-
-const assetMap: { [key in OS]: string } = {
-    "Linux": "https://github.com/ZNotify/server/releases/download/latest/test-server-linux",
-    "Windows": "https://github.com/ZNotify/server/releases/download/latest/test-server-windows.exe",
-    "macOS": "https://github.com/ZNotify/server/releases/download/latest/test-server-macos"
-}
-
-const runnerOS = process.env['RUNNER_OS'] as OS;
 
 async function run() {
     const tempPath = await fs.promises.mkdtemp('server');
@@ -69,10 +59,10 @@ async function wait() {
     core.endGroup();
 }
 
-async function execBinary(path: string) {
+async function execBinary(tmpDir: string) {
     core.startGroup('Executing binary');
-    const filename = getFilename(assetMap[runnerOS]);
-    const execPath = path + '/' + filename;
+    
+    const execPath = path.join(tmpDir, res.filename);
 
     const sub = spawn(execPath, [], {
         detached: true,
@@ -88,15 +78,13 @@ async function execBinary(path: string) {
     core.endGroup();
 }
 
-async function downloadRelease(path: string) {
+async function downloadRelease(tmpDir: string) {
     core.startGroup('Downloading release');
-    const downloadURL = assetMap[runnerOS as OS];
-    const filename = getFilename(downloadURL);
-    const downloadPath = path + '/' + filename;
+    const downloadPath = path.join(tmpDir, res.filename);
 
     const writer = fs.createWriteStream(downloadPath);
 
-    const resp = await axios.get(downloadURL, {
+    const resp = await axios.get(res.url, {
         responseType: 'stream'
     })
 
@@ -128,10 +116,10 @@ async function downloadRelease(path: string) {
 async function downloadArifact(path: string): Promise<Boolean> {
     core.startGroup('Downloading artifact');
     try {
-        const downloadResponse = await artifactClient.downloadArtifact('test-server', path, {
+        const downloadResponse = await artifactClient.downloadArtifact(res.artifactName, path, {
             createArtifactFolder: false
         });
-        core.info(`Artifact ${downloadResponse.artifactName} exists.`);
+        core.info(`Artifact ${downloadResponse.artifactName} exists. Downloaded to ${downloadResponse.downloadPath}`);
         core.endGroup();
         return true;
     } catch (error) {
@@ -142,7 +130,7 @@ async function downloadArifact(path: string): Promise<Boolean> {
 }
 
 async function tryGrantPermission(path: string) {
-    const filename = getFilename(assetMap[runnerOS]);
+    const filename = res.filename;
     core.startGroup('Granting permission');
     if (runnerOS === 'Linux') {
         await exec.exec('chmod', ['+x', `${path}/${filename}`]);
