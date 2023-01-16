@@ -8,7 +8,7 @@ async function log() {
     core.startGroup("Writing log")
     const tmpPath = core.getState('tempPath');
     // read log
-    const logPath = path.join(tmpPath, 'data', 'app.log');
+    const logPath = path.join('data', 'app.log');
     // check log file
 
     if (!fs.existsSync(logPath)) {

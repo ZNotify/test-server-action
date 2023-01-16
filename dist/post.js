@@ -4731,7 +4731,7 @@ var currentResource = resources[runnerOS];
 async function log() {
   core2.startGroup("Writing log");
   const tmpPath = core2.getState("tempPath");
-  const logPath = path.join(tmpPath, "data", "app.log");
+  const logPath = path.join("data", "app.log");
   if (!fs.existsSync(logPath)) {
     core2.warning("Log file not found");
   } else {
