@@ -7,7 +7,7 @@ import * as path from 'path';
 import axios from 'axios';
 import waitPort from 'wait-port';
 import fetch from 'node-fetch';
-import { cancelTimeout, currentResource, runnerOS } from './util';
+import {cancelTimeout, currentResource, runnerOS, startTimeout} from './util';
 
 const artifactClient = artifact.create();
 
@@ -60,6 +60,7 @@ async function execBinary(tmpDir: string) {
     })
 
     const pid = sub.pid;
+    core.info(`Executed binary: ${execPath}`)
     core.info(`Spawned process with PID ${pid}`);
     core.saveState('pid', pid?.toString() ?? '');
 
@@ -134,6 +135,7 @@ async function tryGrantPermission(path: string) {
     core.endGroup();
 }
 
+startTimeout();
 run().catch((error) => {
     core.setFailed(error.message);
     cancelTimeout();

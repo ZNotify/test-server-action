@@ -29443,7 +29443,10 @@ function exit() {
   core.setFailed("Timeout after 20s");
   process.exit(1);
 }
-var timer = setTimeout(exit, 20 * 1e3);
+var timer;
+function startTimeout() {
+  timer = setTimeout(exit, 20 * 1e3);
+}
 function cancelTimeout() {
   clearTimeout(timer);
 }
@@ -29506,6 +29509,7 @@ async function execBinary(tmpDir) {
     shell: true
   });
   const pid = sub.pid;
+  core2.info(`Executed binary: ${execPath}`);
   core2.info(`Spawned process with PID ${pid}`);
   core2.saveState("pid", (pid == null ? void 0 : pid.toString()) ?? "");
   sub.unref();
@@ -29569,6 +29573,7 @@ async function tryGrantPermission(path2) {
   }
   core2.endGroup();
 }
+startTimeout();
 run().catch((error) => {
   core2.setFailed(error.message);
   cancelTimeout();

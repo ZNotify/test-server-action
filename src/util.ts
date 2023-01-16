@@ -5,7 +5,11 @@ function exit() {
     process.exit(1);
 }
 
-const timer = setTimeout(exit, 20 * 1000);
+let timer: NodeJS.Timeout
+
+export function startTimeout() {
+    timer = setTimeout(exit, 20 * 1000);
+}
 
 export function cancelTimeout() {
     clearTimeout(timer);

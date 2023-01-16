@@ -1128,12 +1128,12 @@ var require_lib = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info = this._prepareRequest(verb, parsedUrl, headers);
+          let info2 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info, data);
+            response = yield this.requestRaw(info2, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler of this.handlers) {
@@ -1143,7 +1143,7 @@ var require_lib = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info, data);
+                return authenticationHandler.handleAuthentication(this, info2, data);
               } else {
                 return response;
               }
@@ -1166,8 +1166,8 @@ var require_lib = __commonJS({
                   }
                 }
               }
-              info = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info, data);
+              info2 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info2, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -1196,7 +1196,7 @@ var require_lib = __commonJS({
        * @param info
        * @param data
        */
-      requestRaw(info, data) {
+      requestRaw(info2, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -1208,7 +1208,7 @@ var require_lib = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info, data, callbackForResult);
+            this.requestRawWithCallback(info2, data, callbackForResult);
           });
         });
       }
@@ -1218,12 +1218,12 @@ var require_lib = __commonJS({
        * @param data
        * @param onResult
        */
-      requestRawWithCallback(info, data, onResult) {
+      requestRawWithCallback(info2, data, onResult) {
         if (typeof data === "string") {
-          if (!info.options.headers) {
-            info.options.headers = {};
+          if (!info2.options.headers) {
+            info2.options.headers = {};
           }
-          info.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info2.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -1232,7 +1232,7 @@ var require_lib = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info.httpModule.request(info.options, (msg) => {
+        const req = info2.httpModule.request(info2.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -1244,7 +1244,7 @@ var require_lib = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info.options.path}`));
+          handleResult(new Error(`Request timeout: ${info2.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -1271,27 +1271,27 @@ var require_lib = __commonJS({
         return this._getAgent(parsedUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info = {};
-        info.parsedUrl = requestUrl;
-        const usingSsl = info.parsedUrl.protocol === "https:";
-        info.httpModule = usingSsl ? https : http;
+        const info2 = {};
+        info2.parsedUrl = requestUrl;
+        const usingSsl = info2.parsedUrl.protocol === "https:";
+        info2.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info.options = {};
-        info.options.host = info.parsedUrl.hostname;
-        info.options.port = info.parsedUrl.port ? parseInt(info.parsedUrl.port) : defaultPort;
-        info.options.path = (info.parsedUrl.pathname || "") + (info.parsedUrl.search || "");
-        info.options.method = method;
-        info.options.headers = this._mergeHeaders(headers);
+        info2.options = {};
+        info2.options.host = info2.parsedUrl.hostname;
+        info2.options.port = info2.parsedUrl.port ? parseInt(info2.parsedUrl.port) : defaultPort;
+        info2.options.path = (info2.parsedUrl.pathname || "") + (info2.parsedUrl.search || "");
+        info2.options.method = method;
+        info2.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info.options.headers["user-agent"] = this.userAgent;
+          info2.options.headers["user-agent"] = this.userAgent;
         }
-        info.options.agent = this._getAgent(info.parsedUrl);
+        info2.options.agent = this._getAgent(info2.parsedUrl);
         if (this.handlers) {
           for (const handler of this.handlers) {
-            handler.prepareRequest(info.options);
+            handler.prepareRequest(info2.options);
           }
         }
-        return info;
+        return info2;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -1954,7 +1954,7 @@ var require_path_utils = __commonJS({
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = void 0;
-    var path = __importStar(require("path"));
+    var path2 = __importStar(require("path"));
     function toPosixPath(pth) {
       return pth.replace(/[\\]/g, "/");
     }
@@ -1964,7 +1964,7 @@ var require_path_utils = __commonJS({
     }
     exports.toWin32Path = toWin32Path;
     function toPlatformPath(pth) {
-      return pth.replace(/[/\\]/g, path.sep);
+      return pth.replace(/[/\\]/g, path2.sep);
     }
     exports.toPlatformPath = toPlatformPath;
   }
@@ -2035,7 +2035,7 @@ var require_core = __commonJS({
     var file_command_1 = require_file_command();
     var utils_1 = require_utils();
     var os = __importStar(require("os"));
-    var path = __importStar(require("path"));
+    var path2 = __importStar(require("path"));
     var oidc_utils_1 = require_oidc_utils();
     var ExitCode;
     (function(ExitCode2) {
@@ -2063,7 +2063,7 @@ var require_core = __commonJS({
       } else {
         command_1.issueCommand("add-path", {}, inputPath);
       }
-      process.env["PATH"] = `${inputPath}${path.delimiter}${process.env["PATH"]}`;
+      process.env["PATH"] = `${inputPath}${path2.delimiter}${process.env["PATH"]}`;
     }
     exports.addPath = addPath;
     function getInput(name, options) {
@@ -2135,26 +2135,26 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("notice", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports.notice = notice;
-    function info(message) {
+    function info2(message) {
       process.stdout.write(message + os.EOL);
     }
-    exports.info = info;
-    function startGroup(name) {
+    exports.info = info2;
+    function startGroup2(name) {
       command_1.issue("group", name);
     }
-    exports.startGroup = startGroup;
-    function endGroup() {
+    exports.startGroup = startGroup2;
+    function endGroup2() {
       command_1.issue("endgroup");
     }
-    exports.endGroup = endGroup;
+    exports.endGroup = endGroup2;
     function group(name, fn) {
       return __awaiter(this, void 0, void 0, function* () {
-        startGroup(name);
+        startGroup2(name);
         let result;
         try {
           result = yield fn();
         } finally {
-          endGroup();
+          endGroup2();
         }
         return result;
       });
@@ -2768,7 +2768,7 @@ var require_node = __commonJS({
     var tty = require("tty");
     var util = require("util");
     exports.init = init;
-    exports.log = log;
+    exports.log = log2;
     exports.formatArgs = formatArgs;
     exports.save = save;
     exports.load = load;
@@ -2903,7 +2903,7 @@ var require_node = __commonJS({
       }
       return new Date().toISOString() + " ";
     }
-    function log(...args) {
+    function log2(...args) {
       return process.stderr.write(util.format(...args) + "\n");
     }
     function save(namespaces) {
@@ -3817,15 +3817,15 @@ var require_route = __commonJS({
       };
     }
     function wrapConversion(toModel, graph) {
-      const path = [graph[toModel].parent, toModel];
+      const path2 = [graph[toModel].parent, toModel];
       let fn = conversions[graph[toModel].parent][toModel];
       let cur = graph[toModel].parent;
       while (graph[cur].parent) {
-        path.unshift(graph[cur].parent);
+        path2.unshift(graph[cur].parent);
         fn = link(conversions[graph[cur].parent][cur], fn);
         cur = graph[cur].parent;
       }
-      fn.conversion = path;
+      fn.conversion = path2;
       return fn;
     }
     module2.exports = function(fromModel) {
@@ -4468,7 +4468,7 @@ var require_validate_parameters = __commonJS({
       if (port > 65535)
         throw new ValidationError("'port' must not be greater than 65535.");
       const host = params.host || "localhost";
-      const path = params.path || (protocol === "http" ? "/" : void 0);
+      const path2 = params.path || (protocol === "http" ? "/" : void 0);
       const interval = params.interval || 1e3;
       if (!Number.isInteger(interval))
         throw new ValidationError("'interval' must be a number.");
@@ -4493,7 +4493,7 @@ var require_validate_parameters = __commonJS({
         protocol,
         port,
         host,
-        path,
+        path: path2,
         interval,
         timeout,
         output,
@@ -4650,7 +4650,7 @@ Host: ${params.host}\r
           protocol,
           host,
           port,
-          path,
+          path: path2,
           interval,
           timeout,
           output,
@@ -4662,7 +4662,7 @@ Host: ${params.host}\r
         outputFunction.starting({ host, port });
         const loop = (ipVersion = 4) => {
           outputFunction.tryConnect();
-          tryConnect({ protocol, host, port, path, waitForDns, ipVersion }, connectTimeout).then((open) => {
+          tryConnect({ protocol, host, port, path: path2, waitForDns, ipVersion }, connectTimeout).then((open) => {
             debug(`Socket status is: ${open}`);
             if (open) {
               outputFunction.connected();
@@ -4691,6 +4691,7 @@ Host: ${params.host}\r
 // src/post.ts
 var core2 = __toESM(require_core());
 var fs = __toESM(require("fs"));
+var path = __toESM(require("path"));
 var import_wait_port = __toESM(require_wait_port());
 
 // src/util.ts
@@ -4699,7 +4700,10 @@ function exit() {
   core.setFailed("Timeout after 20s");
   process.exit(1);
 }
-var timer = setTimeout(exit, 20 * 1e3);
+var timer;
+function startTimeout() {
+  timer = setTimeout(exit, 20 * 1e3);
+}
 function cancelTimeout() {
   clearTimeout(timer);
 }
@@ -4724,24 +4728,38 @@ var resources = {
 var currentResource = resources[runnerOS];
 
 // src/post.ts
-async function run() {
-  const path = core2.getState("tempPath");
-  if (path) {
-    const logPath = "data/app.log";
-    if (!fs.existsSync(logPath)) {
-      core2.warning("Log file not found");
-    } else {
-      const log = await fs.promises.readFile(logPath, "utf-8");
-      core2.summary.addHeading("Server log", 4);
-      core2.summary.addDetails("log", `<pre>${log}</pre>`);
-      core2.summary.write();
-    }
+async function log() {
+  core2.startGroup("Writing log");
+  const tmpPath = core2.getState("tempPath");
+  const logPath = path.join(tmpPath, "data/app.log");
+  if (!fs.existsSync(logPath)) {
+    core2.warning("Log file not found");
+  } else {
+    const log2 = await fs.promises.readFile(logPath, "utf-8");
+    core2.summary.addHeading("Server log", 3);
+    core2.summary.addDetails("log", `<pre>${log2}</pre>`);
+    await core2.summary.write();
+    core2.info("Log written");
   }
+  core2.endGroup();
+}
+async function clean() {
+  core2.startGroup("Cleaning");
   const result = await (0, import_wait_port.default)({ host: "localhost", port: 14444, timeout: 10 * 1e3, output: "silent" });
   if (!result.open) {
     core2.setFailed("Server panic during test");
+  } else {
+    const pid = Number(core2.getState("pid"));
+    core2.info(`Killing process ${pid}`);
+    process.kill(pid);
   }
+  core2.endGroup();
 }
+async function run() {
+  await log();
+  await clean();
+}
+startTimeout();
 run().catch((error) => {
   core2.setFailed(error.message);
   cancelTimeout();
