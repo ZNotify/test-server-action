@@ -57,10 +57,11 @@ async function execBinary(tmpDir: string) {
         stdio: 'ignore',
         windowsHide: true,
         shell: true,
-        cwd: tmpDir
+        cwd: path.resolve(tmpDir)
     })
 
     const pid = sub.pid;
+    core.info(`Working directory: ${tmpDir}`)
     core.info(`Executed binary: ${execPath}`)
     core.info(`Spawned process with PID ${pid}`);
     core.saveState('pid', pid?.toString() ?? '');
