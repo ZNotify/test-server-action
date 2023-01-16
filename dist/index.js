@@ -29507,7 +29507,7 @@ async function execBinary(tmpDir) {
     stdio: "ignore",
     windowsHide: true,
     shell: true,
-    cwd: path.resolve(tmpDir)
+    cwd: path.resolve(process.cwd(), tmpDir)
   });
   const pid = sub.pid;
   core2.info(`Working directory: ${tmpDir}`);

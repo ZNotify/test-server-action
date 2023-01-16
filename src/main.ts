@@ -7,7 +7,7 @@ import * as path from 'path';
 import axios from 'axios';
 import waitPort from 'wait-port';
 import fetch from 'node-fetch';
-import {cancelTimeout, currentResource, runnerOS, startTimeout} from './util';
+import { cancelTimeout, currentResource, runnerOS, startTimeout } from './util';
 
 const artifactClient = artifact.create();
 
@@ -57,7 +57,7 @@ async function execBinary(tmpDir: string) {
         stdio: 'ignore',
         windowsHide: true,
         shell: true,
-        cwd: path.resolve(tmpDir)
+        cwd: path.resolve(process.cwd(), tmpDir)
     })
 
     const pid = sub.pid;
