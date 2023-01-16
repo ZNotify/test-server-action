@@ -63,6 +63,7 @@ jobs:
       - uses: ./
 
       - name: Setup Debug Session
+        if: always()
         uses: csexton/debugger-action@master
       
       - name: Test Port
