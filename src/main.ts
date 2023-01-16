@@ -56,7 +56,8 @@ async function execBinary(tmpDir: string) {
         detached: true,
         stdio: 'ignore',
         windowsHide: true,
-        shell: true
+        shell: true,
+        cwd: tmpDir
     })
 
     const pid = sub.pid;

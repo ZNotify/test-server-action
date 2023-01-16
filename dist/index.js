@@ -29506,7 +29506,8 @@ async function execBinary(tmpDir) {
     detached: true,
     stdio: "ignore",
     windowsHide: true,
-    shell: true
+    shell: true,
+    cwd: tmpDir
   });
   const pid = sub.pid;
   core2.info(`Executed binary: ${execPath}`);
