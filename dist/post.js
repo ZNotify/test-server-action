@@ -4696,13 +4696,14 @@ var import_wait_port = __toESM(require_wait_port());
 
 // src/util.ts
 var core = __toESM(require_core());
+var timeoutLimit = 60;
 function exit() {
-  core.setFailed("Timeout after 20s");
+  core.setFailed(`Timeout after ${timeoutLimit}s`);
   process.exit(1);
 }
 var timer;
 function startTimeout() {
-  timer = setTimeout(exit, 20 * 1e3);
+  timer = setTimeout(exit, timeoutLimit * 1e3);
 }
 function cancelTimeout() {
   clearTimeout(timer);

@@ -1,14 +1,16 @@
 import * as core from '@actions/core';
 
+const timeoutLimit= 60;
+
 function exit() {
-    core.setFailed('Timeout after 20s');
+    core.setFailed(`Timeout after ${timeoutLimit}s`);
     process.exit(1);
 }
 
 let timer: NodeJS.Timeout
 
 export function startTimeout() {
-    timer = setTimeout(exit, 20 * 1000);
+    timer = setTimeout(exit, timeoutLimit * 1000);
 }
 
 export function cancelTimeout() {
