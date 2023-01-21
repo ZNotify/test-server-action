@@ -24,10 +24,10 @@ async function run() {
     }
     await tryGrantPermission(tempPath);
     await execBinary(tempPath);
-    await wait();
+    await waitUp();
 }
 
-async function wait() {
+async function waitUp() {
     core.startGroup('Waiting server up');
 
     const ret = await waitPort({ host: 'localhost', port: 14444, timeout: 1000 * 5, output: 'silent' })
@@ -37,12 +37,21 @@ async function wait() {
         core.info('Server is up');
     }
 
-    if (runnerOS === 'Windows') {
-        // Windows is too slow to start server
-        core.info('Windows additional waiting');
-        await fetch('http://localhost:14444/alive');
-        core.info('Windows additional waiting done');
+
+    const aliveResp = await fetch('http://localhost:14444/alive');
+    if (aliveResp.status !== 204) {
+        core.setFailed('Server failed to start');
+    } else {
+        core.info('Server is alive');
     }
+
+    const userResp: any = await (await fetch('http://localhost:14444/check?user_secret=test')).json();
+    if (userResp["body"] === true) {
+        core.info('User is valid. test passed');
+    } else {
+        core.setFailed(`User is invalid: ${userResp["body"]}`);
+    }
+
 
     core.endGroup();
 }
