@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 
-const timeoutLimit= 60;
+const timeoutLimit = 60 * 10;
 
 function exit() {
     core.setFailed(`Timeout after ${timeoutLimit}s`);
