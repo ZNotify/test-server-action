@@ -2,9 +2,14 @@ name: "Setup test server"
 author: "Zxilly"
 description: "Setup a test server of Notify."
 
+inputs:
+  require-current-artifact:
+    description: "Fail if the test server artifact from the current workflow run cannot be downloaded."
+    required: false
+    default: "false"
 
 runs:
-  using: "node16"
+  using: "node24"
   main: "dist/index.js"
   post: "dist/post.js"
 

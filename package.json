@@ -6,13 +6,14 @@
   "author": "Zxilly <zxilly@outlook.com>",
   "license": "UNLICENSED",
   "scripts": {
-    "build:main": "esbuild src/main.ts --bundle --platform=node --minify --target=node16 --outfile=dist/index.js",
-    "build:post": "esbuild src/post.ts --bundle --platform=node --minify --target=node16 --outfile=dist/post.js",
+    "build:main": "esbuild src/main.ts --bundle --platform=node --minify --target=node24 --outfile=dist/index.js",
+    "build:post": "esbuild src/post.ts --bundle --platform=node --minify --target=node24 --outfile=dist/post.js",
     "build": "yarn build:main && yarn build:post",
+    "test": "esbuild tests/artifact.test.ts --bundle --platform=node --target=node24 --outfile=.cache/tests/artifact.test.cjs && node --test .cache/tests/artifact.test.cjs",
     "update": "yarn build && git add ."
   },
   "devDependencies": {
-    "@actions/artifact": "^1.1.1",
+    "@actions/artifact": "^2.3.2",
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.1.1",
