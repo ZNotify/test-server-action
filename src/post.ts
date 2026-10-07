@@ -39,6 +39,10 @@ async function clean() {
 }
 
 async function run() {
+    if (!core.getState('pid')) {
+        core.info('No test server was started; skipping cleanup');
+        return;
+    }
     await log();
     await clean();
 }

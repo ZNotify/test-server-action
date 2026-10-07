@@ -8,8 +8,9 @@ import axios from 'axios';
 import waitPort from 'wait-port';
 import fetch from 'node-fetch';
 import { cancelTimeout, currentResource, runnerOS, startTimeout } from './util';
+import { downloadCurrentArtifact } from './artifact';
 
-const artifactClient = artifact.create();
+const artifactClient = new artifact.DefaultArtifactClient();
 
 const res = currentResource;
 
@@ -18,7 +19,8 @@ async function run() {
     const tempPath = await fs.promises.mkdtemp('server');
     core.saveState('tempPath', tempPath);
 
-    const da = await downloadArifact(tempPath);
+    const da = await downloadCurrentArtifact(artifactClient, res.artifactName, tempPath,
+        core.getBooleanInput('require-current-artifact'));
     if (!da) {
         await downloadRelease(tempPath);
     }
@@ -114,22 +116,6 @@ async function downloadRelease(tmpDir: string) {
     core.endGroup();
 }
 
-async function downloadArifact(path: string): Promise<Boolean> {
-    core.startGroup('Downloading artifact');
-    try {
-        const downloadResponse = await artifactClient.downloadArtifact(res.artifactName, path, {
-            createArtifactFolder: false
-        });
-        core.info(`Artifact ${downloadResponse.artifactName} exists. Downloaded to ${downloadResponse.downloadPath}`);
-        core.endGroup();
-        return true;
-    } catch (error) {
-        core.info('Artifact may not exist, downloading from release');
-        core.endGroup();
-        return false;
-    }
-}
-
 async function tryGrantPermission(path: string) {
     const filename = res.filename;
     core.startGroup('Granting permission');
@@ -152,4 +138,3 @@ run().catch((error) => {
 }).then(() => {
     cancelTimeout();
 });
-
