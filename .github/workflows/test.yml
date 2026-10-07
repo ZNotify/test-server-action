@@ -1,10 +1,37 @@
 name: Test
 
-on: push
+on: [push, pull_request]
 
 jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node .yarn/releases/yarn-3.3.0.cjs install --immutable
+      - run: node .yarn/releases/yarn-3.3.0.cjs test
+      - run: node .yarn/releases/yarn-3.3.0.cjs exec tsc --noEmit
+      - run: node .yarn/releases/yarn-3.3.0.cjs build
+      - run: git diff --exit-code -- dist
+
+  test-require-current-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        id: strict
+        continue-on-error: true
+        with:
+          require-current-artifact: true
+      - name: Verify missing artifact fails without release fallback
+        if: always()
+        shell: bash
+        run: test '${{ steps.strict.outcome }}' = 'failure'
+
   upload-artifact:
-    needs: test-download-release
+    needs: [unit-tests, test-download-release, test-require-current-artifact]
     runs-on: ubuntu-latest
     steps:
       - name: Download release
@@ -14,21 +41,21 @@ jobs:
           wget -q -O test-server-windows.exe https://github.com/ZNotify/server/releases/download/test/test-server-windows.exe
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: server-linux
           path: |
             test-server-linux
           if-no-files-found: error
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: server-macos
           path: |
             test-server-macos
           if-no-files-found: error
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: server-windows
           path: |
@@ -46,6 +73,8 @@ jobs:
         uses: actions/checkout@v3
 
       - uses: ./
+        with:
+          require-current-artifact: true
 
       - name: Test Port
         shell: bash
